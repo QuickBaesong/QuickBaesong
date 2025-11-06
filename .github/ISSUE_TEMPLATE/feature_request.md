@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## 🚀 Description
+## 🚀 만들고자 하는 기능
 작업에 대한 간단한 설명을 작성합니다.
 
 ## ✅ TODO
