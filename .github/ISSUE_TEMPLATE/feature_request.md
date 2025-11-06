@@ -1,8 +1,8 @@
 ---
 name: Feature request
 about: 본인이 작업할 내용에 대한 이슈를 작성합니다.
-title: "[feat]"
-labels: feature
+title: "[feat] "
+labels: feature, refactor
 assignees: ''
 
 ---
