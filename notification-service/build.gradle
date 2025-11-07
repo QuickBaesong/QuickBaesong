@@ -1,0 +1,18 @@
+dependencies {
+    // Web 및 Eureka 의존성 추가 (PostgreSQL 제외)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // 루트 모듈의 subprojects에서 이미 설정된 항목들:
+    // - lombok (compileOnly, annotationProcessor)
+    // - spring-boot-starter-test (testImplementation)
+    // - junit-platform-launcher (testRuntimeOnly)
+}
+
+jar {
+    enabled = false
+}
+
+bootJar {
+    enabled = true
+}

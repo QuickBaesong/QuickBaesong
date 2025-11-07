@@ -1,0 +1,22 @@
+// 멀티모듈 서브모듈 - 기본 설정만
+
+dependencies {
+	// 기존 의존성 유지
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// 루트 모듈의 subprojects에서 이미 설정된 항목들:
+	// - lombok (compileOnly, annotationProcessor)
+	// - spring-boot-starter-test (testImplementation)
+	// - junit-platform-launcher (testRuntimeOnly)
+}
+
+// 실행 가능한 마이크로서비스로 설정
+jar {
+	enabled = false
+}
+
+bootJar {
+	enabled = true
+}

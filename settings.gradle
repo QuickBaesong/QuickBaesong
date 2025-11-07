@@ -1,0 +1,12 @@
+rootProject.name = 'quickbaesong'
+
+include(':eureka-server')
+include(':gateway')
+include(':common')
+include(':auth-service')
+include(':company-service')
+include(':hub-service')
+include(':item-service')
+include(':order-service')
+include(':delivery-service')
+include(':notification-service')

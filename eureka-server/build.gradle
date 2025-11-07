@@ -1,0 +1,19 @@
+dependencies {
+	// Eureka Server 전용 의존성
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// 루트 모듈의 subprojects에서 이미 설정된 항목들:
+	// - lombok (compileOnly, annotationProcessor)
+	// - spring-boot-starter-test
+	// - junit-platform-launcher
+}
+
+// 실행 가능한 마이크로서비스로 설정
+jar {
+	enabled = false
+}
+
+bootJar {
+	enabled = true
+}

@@ -1,0 +1,21 @@
+// 라이브러리 모듈: 다른 모듈들이 참조하는 공통 코드
+
+dependencies {
+    // 공통으로 사용될 의존성들
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 루트 모듈의 subprojects에서 이미 설정된 항목들:
+    // - lombok (compileOnly, annotationProcessor) 
+    // - spring-boot-starter-test
+    // - junit-platform-launcher
+}
+
+// 라이브러리 모듈: Plain JAR 생성
+jar {
+    enabled = true   // Plain JAR 생성 활성화
+}
+
+bootJar {
+    enabled = false  // 실행 가능한 JAR 비활성화
+}
