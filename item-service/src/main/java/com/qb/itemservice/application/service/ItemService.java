@@ -1,6 +1,10 @@
 package com.qb.itemservice.application.service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +17,10 @@ import com.qb.itemservice.domain.entity.Item;
 import com.qb.itemservice.domain.repository.ItemRepository;
 import com.qb.itemservice.domain.service.CompanyHubPolicy;
 import com.qb.itemservice.dto.ReqCreateItemDto;
+import com.qb.itemservice.dto.ReqPatchItemDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
+import com.qb.itemservice.dto.ResPatchItemDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -60,4 +66,58 @@ public class ItemService {
 
 		return ResGetItemDto.fromEntity(item);
 	}
+
+	@Transactional
+	public List<ResPatchItemDto> decreaseQuantity(List<ReqPatchItemDto> itemList) {
+
+		List<UUID> itemsIds = itemList.stream()
+			.map(ReqPatchItemDto::getItemId)
+			.toList();
+
+		List<Item> items = itemRepository.findAllByItemIdInAndDeletedAtIsNull(itemsIds);
+
+		if (items.size() != itemsIds.size()) {
+			throw new IllegalArgumentException("존재하지 않거나 삭제된 아이템입니다.");
+		}
+
+		Map<UUID, Item> itemMap = items.stream()
+			.collect(Collectors.toMap(Item::getItemId, Function.identity()));
+
+		for(ReqPatchItemDto dto : itemList){
+			Item item = itemMap.get(dto.getItemId());
+			item.decreaseStock(dto.getQuantity());
+		}
+
+		return items.stream()
+			.map(ResPatchItemDto::fromEntity)
+			.toList();
+	}
+
+	@Transactional
+	public List<ResPatchItemDto> increaseQuantity(List<ReqPatchItemDto> itemList) {
+
+		List<UUID> itemsIds = itemList.stream()
+			.map(ReqPatchItemDto::getItemId)
+			.toList();
+
+		List<Item> items = itemRepository.findAllByItemIdInAndDeletedAtIsNull(itemsIds);
+
+		if (items.size() != itemsIds.size()) {
+			throw new IllegalArgumentException("존재하지 않거나 삭제된 아이템입니다.");
+		}
+
+		Map<UUID, Item> itemMap = items.stream()
+			.collect(Collectors.toMap(Item::getItemId, Function.identity()));
+
+		for(ReqPatchItemDto dto : itemList){
+			Item item = itemMap.get(dto.getItemId());
+			item.increaseStock(dto.getQuantity());
+		}
+
+		return items.stream()
+			.map(ResPatchItemDto::fromEntity)
+			.toList();
+	}
+
+
 }

@@ -1,5 +1,6 @@
 package com.qb.itemservice.presentation.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,10 @@ import com.qb.common.enums.SuccessCode;
 import com.qb.common.response.ApiResponse;
 import com.qb.itemservice.application.service.ItemService;
 import com.qb.itemservice.dto.ReqCreateItemDto;
+import com.qb.itemservice.dto.ReqPatchItemDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
+import com.qb.itemservice.dto.ResPatchItemDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +41,15 @@ public class ItemController {
 		return ApiResponse.of(SuccessCode.OK, itemService.getItem(itemId));
 	}
 
+	@PatchMapping("/decrease")
+	public ApiResponse<List<ResPatchItemDto>> decreaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
+		return ApiResponse.of(SuccessCode.OK, itemService.decreaseQuantity(itemList));
+	}
 
+	@PatchMapping("/increase")
+	public ApiResponse<List<ResPatchItemDto>> increaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
+		return ApiResponse.of(SuccessCode.OK, itemService.decreaseQuantity(itemList));
+	}
 
 
 }
