@@ -3,6 +3,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     runtimeOnly 'org.postgresql:postgresql'
+    implementation project(':common')
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    runtimeOnly 'com.h2database:h2'
+    testRuntimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // webclient
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // Actuator (헬스 체크)
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 
     // 루트 모듈의 subprojects에서 이미 설정된 항목들:
     // - lombok (compileOnly, annotationProcessor)
