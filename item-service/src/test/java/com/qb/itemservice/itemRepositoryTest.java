@@ -13,10 +13,8 @@ import com.qb.itemservice.domain.entity.Item;
 import com.qb.itemservice.domain.repository.ItemRepository;
 
 import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
 
 @DataJpaTest
-@Slf4j
 @DisplayName("Item Entity 테스트")
 public class itemRepositoryTest {
 
@@ -33,7 +31,6 @@ public class itemRepositoryTest {
 
 		// when
 		Item result = itemRepository.save(item);
-		log.info(result.getItemId().toString());
 
 		// then
 		assertThat(result.getItemId()).isNotNull();
