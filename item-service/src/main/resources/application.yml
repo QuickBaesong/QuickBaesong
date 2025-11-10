@@ -4,10 +4,6 @@ server:
 spring:
   application:
     name: item-service
-    profiles:
-      active: local
-    config:
-      import: optional:file:./.env
 
 eureka:
   client:

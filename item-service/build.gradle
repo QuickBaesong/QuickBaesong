@@ -1,22 +1,13 @@
 dependencies {
-    implementation project(":common")
-
     // Web 및 Eureka 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-
     runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly 'com.h2database:h2'
 
+    // 루트 모듈의 subprojects에서 이미 설정된 항목들:
+    // - lombok (compileOnly, annotationProcessor)
+    // - spring-boot-starter-test (testImplementation)
+    // - junit-platform-launcher (testRuntimeOnly)
 }
 
 jar {
