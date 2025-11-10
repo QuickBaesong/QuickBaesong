@@ -4,10 +4,10 @@ server:
 spring:
   application:
     name: delivery-service
-    profiles:
-      active: local
-      config:
-        import: optional:file:./.env
+  profiles:
+    active: local
+  config:
+    import: optional:file:./.env
 
 eureka:
   client:
