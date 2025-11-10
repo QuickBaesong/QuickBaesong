@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qb.itemservice.application.service.ItemService;
 import com.qb.itemservice.dto.ReqCreateItemDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
+import com.qb.itemservice.dto.ResGetItemDto;
 import com.qb.itemservice.presentation.controller.ItemController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +48,7 @@ public class ItemControllerTest {
 	private UUID companyId =  UUID.randomUUID();
 
 	@Test
-	@DisplayName("정상적인 상품 등록 요청시 201 응답과 DTO를 반환")
+	@DisplayName("Item: 상품 등록 요청/응답 성공 테스트")
 	void itemCreate_SuccessTest() throws Exception {
 
 		// given
@@ -75,6 +77,34 @@ public class ItemControllerTest {
 			.andExpect(jsonPath("$.data.price").value(5500))
 			.andExpect(jsonPath("$.data.quantity").value(10));
 
+	}
+
+	@Test
+	@DisplayName("Item: 단건조회 요청/응답 성공 테스트")
+	void getItemByItemId_SuccessTest() throws Exception {
+
+		// given
+		UUID itemId = UUID.randomUUID();
+
+		ResGetItemDto resGetItemDto = ResGetItemDto.builder()
+			.itemId(itemId)
+			.itemName("테스트상품")
+			.companyId(UUID.randomUUID())
+			.hubId(UUID.randomUUID())
+			.price(5500L)
+			.quantity(10L)
+			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
+			.build();
+
+		when(itemService.getItem(itemId)).thenReturn(resGetItemDto);
+
+		// when & then
+
+		mockMvc.perform(get("/v1/items/{itemId}", itemId))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data.price").value(5500L))
+			.andExpect(jsonPath("$.data.quantity").value(10L));
 	}
 
 
