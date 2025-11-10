@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: hub-service
+  profiles:
+      active: local
+
 
 eureka:
   client:
