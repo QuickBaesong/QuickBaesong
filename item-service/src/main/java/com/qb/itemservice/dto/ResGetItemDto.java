@@ -11,30 +11,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ResCreateItemDto {
+public class ResGetItemDto {
 	private UUID itemId;
 	private String itemName;
-	private String companyName;
-	private String hubName;
 	private Long price;
 	private Long quantity;
+	private UUID hubId;
+	private UUID companyId;
 	private LocalDateTime createdAt;
-	private String createdBy;
+	private LocalDateTime updatedAt;
 
-	public static ResCreateItemDto fromEntity(Item item, String hubName, String companyName) {
+	public static ResGetItemDto fromEntity(Item item){
 
-		return ResCreateItemDto.builder()
+		return ResGetItemDto.builder()
 			.itemId(item.getItemId())
 			.itemName(item.getItemName())
-			.companyName(companyName)
-			.hubName(hubName)
 			.price(item.getPrice())
 			.quantity(item.getQuantity())
+			.hubId(item.getHubId())
+			.companyId(item.getCompanyId())
 			.createdAt(item.getCreatedAt())
-			.createdBy(item.getCreatedBy())
+			.updatedAt(item.getUpdatedAt())
 			.build();
 	}
 }

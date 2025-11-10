@@ -16,6 +16,7 @@ import com.qb.common.response.ApiResponse;
 import com.qb.itemservice.application.service.ItemService;
 import com.qb.itemservice.dto.ReqCreateItemDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
+import com.qb.itemservice.dto.ResGetItemDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,11 @@ public class ItemController {
 	@PostMapping
 	public ApiResponse<ResCreateItemDto> createItem(@RequestBody @Valid ReqCreateItemDto requestDto){
 		return ApiResponse.of(SuccessCode.CREATED, itemService.createItem(requestDto));
+	}
+
+	@GetMapping("/{itemId}")
+	public ApiResponse<ResGetItemDto> getItem(@PathVariable UUID itemId){
+		return ApiResponse.of(SuccessCode.OK, itemService.getItem(itemId));
 	}
 
 
