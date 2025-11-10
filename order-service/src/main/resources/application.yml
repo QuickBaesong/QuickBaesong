@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: order-service
+  profiles:
+    active: local
+  config:
+    import: optional:file:./.env
 
 eureka:
   client:
