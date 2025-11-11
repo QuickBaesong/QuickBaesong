@@ -16,7 +16,7 @@ public enum ErrorCode {
     // -- 업체 --
     NOT_FOUND_COMPANY("해당 업체를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     // -- 허브 --
-    // -- 상품 --
+
     // -- 배송 --
     // -- 주문 --
     // -- 알림(슬랙) --

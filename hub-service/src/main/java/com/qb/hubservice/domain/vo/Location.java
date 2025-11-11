@@ -31,7 +31,7 @@ public class Location {
     }
 
 
-    private void validate(String address, BigDecimal latitude, BigDecimal longitude) {
+    private static void validate(String address, BigDecimal latitude, BigDecimal longitude) {
 
         if (address == null || address.trim().isEmpty()) {
             throw new IllegalArgumentException("주소는 필수 입력 항목입니다.");

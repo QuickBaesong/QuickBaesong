@@ -13,7 +13,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+
 public class Hub extends BaseEntity {
 
     @Id
@@ -26,4 +26,13 @@ public class Hub extends BaseEntity {
 
     @Embedded
     private Location location; // location 필드 하나로 위도, 경도, 주소 관리
+
+    @Builder
+    public static Hub create(String hubName, Location location) {
+
+        return Hub.builder()
+                .hubName(hubName)
+                .location(location)
+                .build();
+    }
 }

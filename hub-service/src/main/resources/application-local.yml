@@ -16,3 +16,15 @@ spring:
       hibernate:
         format_sql: true
         highlight_sql: true
+# 로깅 설정
+logging:
+  level:
+    com.qb.hubservice: DEBUG
+    org.hibernate.SQL: DEBUG
+# Feign 클라이언트 설정
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000

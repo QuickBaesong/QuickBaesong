@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Hub_Route extends BaseEntity {
+public class HubRoute extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
