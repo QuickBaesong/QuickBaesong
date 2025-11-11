@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -14,21 +15,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qb.itemservice.application.service.ItemService;
 import com.qb.itemservice.dto.ReqCreateItemDto;
+import com.qb.itemservice.dto.ReqPatchItemDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
+import com.qb.itemservice.dto.ResPatchItemDto;
 import com.qb.itemservice.presentation.controller.ItemController;
 
-import lombok.extern.slf4j.Slf4j;
 
 @WebMvcTest(ItemController.class)
 @Import(ItemController.class)
-@Slf4j
 @DisplayName("Item Controller Test")
 public class ItemControllerTest {
 
@@ -107,6 +109,38 @@ public class ItemControllerTest {
 			.andExpect(jsonPath("$.data.quantity").value(10L));
 	}
 
+	@Test
+	@DisplayName("Item : 재고 감소 요청/응답 성공 테스트")
+	void decreaseQuantity_SuccessTest() throws Exception {
+
+		// given
+		UUID itemId1 = UUID.randomUUID();
+		UUID itemId2 = UUID.randomUUID();
+
+		// 서비스가 반환할 DTO 목록
+		List<ResPatchItemDto> resList = List.of(
+			new ResPatchItemDto(itemId1, 90L), // 감소 후 수량
+			new ResPatchItemDto(itemId2, 0L)   // 감소 후 수량
+		);
+
+		// 서비스 Mocking
+		given(itemService.decreaseQuantity(any())).willReturn(resList);
+
+		// 요청 DTO
+		List<ReqPatchItemDto> reqList = List.of(
+			new ReqPatchItemDto(itemId1, 10L),
+			new ReqPatchItemDto(itemId2, 200L)
+		);
+
+		// when & then
+		mockMvc.perform(patch("/v1/items/decrease")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(reqList)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.data").isArray())
+			.andExpect(jsonPath("$.data[0].quantity").value(90))
+			.andExpect(jsonPath("$.data[1].quantity").value(0));
+	}
 
 
 }
