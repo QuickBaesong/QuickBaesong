@@ -3,6 +3,7 @@ package com.qb.deliveryservice.domain.model;
 import com.qb.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class Delivery extends BaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "delivery_id", columnDefinition = "UUID")
     private UUID id;
 
