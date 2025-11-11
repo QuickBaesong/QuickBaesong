@@ -1,15 +1,16 @@
-package com.qb.common.exception;
+package com.qb.authservice.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class CustomException extends RuntimeException{
-    private final BaseErrorCode errorCode;
+public class AuthCustomException extends RuntimeException {
+
+    private final AuthErrorCode errorCode;
     private final String message;
     private final HttpStatus status;
 
-    public CustomException(BaseErrorCode errorCode){
+    public AuthCustomException(AuthErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();

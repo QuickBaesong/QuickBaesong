@@ -4,7 +4,10 @@ server:
 spring:
   application:
     name: hub-service
-
+profiles:
+  active: local
+  config:
+    import: optional:file:./.env
 eureka:
   client:
     service-url:
