@@ -2,8 +2,10 @@ package com.qb.authservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan(basePackages = {"com.qb.common","com.qb.authservice"})
 public class AuthServiceApplication {
 
 	public static void main(String[] args) {
