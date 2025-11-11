@@ -3,7 +3,6 @@ package com.qb.deliveryservice.domain.model;
 import com.qb.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -11,8 +10,6 @@ import java.util.UUID;
 @Table(name = "p_delivery")
 @Getter
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Delivery extends BaseEntity {
 
     @Id
@@ -44,6 +41,27 @@ public class Delivery extends BaseEntity {
 
     @Column(name = "company_manager_id", nullable = false)
     private String companyManagerId; // 업체배송담당자 ID
+
+    @Builder
+    private Delivery(
+            UUID orderId,
+            DeliveryStatus currentStatus,
+            UUID departureHubId,
+            UUID destinationHubId,
+            String deliveryAddress,
+            String recipientName,
+            String recipientSlackId,
+            String companyManagerId
+    ) {
+        this.orderId = orderId;
+        this.currentStatus = currentStatus;
+        this.departureHubId = departureHubId;
+        this.destinationHubId = destinationHubId;
+        this.deliveryAddress = deliveryAddress;
+        this.recipientName = recipientName;
+        this.recipientSlackId = recipientSlackId;
+        this.companyManagerId = companyManagerId;
+    }
 
 
 
