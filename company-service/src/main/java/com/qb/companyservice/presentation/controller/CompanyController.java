@@ -30,13 +30,13 @@ public class CompanyController {
   @PostMapping
   public ResponseEntity<ApiResponse<CompanyResponse>> createCompany(
       @Valid @RequestBody CompanyCreateRequest request,
-      @RequestHeader(value = "X-User-Id", required = false) String userIdHeader) {
+      @RequestHeader("X-User-Id") String userIdHeader) {
 
     log.info("업체 생성 API 호출: 업체명={}, 타입={}, 허브ID={}",
         request.getCompanyName(), request.getCompanyType(), request.getHubId());
 
     try {
-      // 헤더에서 사용자 ID 추출 (임시로 헤더 사용, 실제로는 JWT에서 추출)
+      // 헤더에서 사용자 ID 추출
       UUID userId = parseUserId(userIdHeader);
       log.debug("요청 사용자 ID: {}", userId);
 
@@ -61,20 +61,20 @@ public class CompanyController {
   }
 
   /**
-   * 헤더에서 사용자 ID 파싱 (임시 구현)
-   * 실제로는 JWT 토큰에서 사용자 정보를 추출해야 함
+   * 헤더에서 사용자 ID 파싱
+   * 실제 구현에서는 JWT 토큰에서 사용자 정보를 추출해야 함
    */
   private UUID parseUserId(String userIdHeader) {
     if (userIdHeader == null || userIdHeader.trim().isEmpty()) {
-      log.warn("사용자 ID 헤더가 없음, 임시 UUID 생성");
-      return UUID.randomUUID();
+      // 실제 구현에서는 인증 정보가 없으면 401 Unauthorized를 반환해야 함
+      throw new IllegalArgumentException("X-User-Id 헤더는 필수입니다.");
     }
 
     try {
       return UUID.fromString(userIdHeader);
     } catch (IllegalArgumentException e) {
-      log.warn("유효하지 않은 사용자 ID 헤더: {}, 임시 UUID 생성", userIdHeader);
-      return UUID.randomUUID();
+      log.warn("유효하지 않은 사용자 ID 헤더: {}", userIdHeader);
+      throw new IllegalArgumentException("유효하지 않은 UUID 형식입니다.", e);
     }
   }
 }

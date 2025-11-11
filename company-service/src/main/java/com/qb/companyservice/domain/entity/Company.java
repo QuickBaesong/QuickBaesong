@@ -29,14 +29,14 @@ public class Company extends BaseEntity {
   @Column(name = "hub_id", nullable = false)
   private UUID hubId;
 
-  @Column(name = "company_name", nullable = false, length = 20)
+  @Column(name = "company_name", nullable = false, length = 100)
   private String companyName;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "company_type", nullable = false, length = 20)
   private CompanyType companyType;
 
-  @Column(name = "company_address", nullable = false, length = 50)
+  @Column(name = "company_address", nullable = false, length = 255)
   private String companyAddress;
 
   @Builder
@@ -73,4 +73,6 @@ public class Company extends BaseEntity {
       this.companyAddress = companyAddress;
     }
   }
+
+  // delete() 메서드 제거 - CompanyDomainService에서 처리
 }

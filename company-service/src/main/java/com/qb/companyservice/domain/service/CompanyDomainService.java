@@ -4,7 +4,6 @@ import com.qb.companyservice.domain.entity.Company;
 import com.qb.companyservice.domain.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,4 +51,6 @@ public class CompanyDomainService {
       throw new IllegalArgumentException("이미 존재하는 업체명입니다: " + companyName);
     }
   }
+
+  // delete() 메서드와 findById() 메서드 제거 - 지금은 생성 API만 필요
 }
