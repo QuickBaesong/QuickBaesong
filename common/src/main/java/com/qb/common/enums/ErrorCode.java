@@ -15,13 +15,7 @@ public enum ErrorCode {
     NOT_FOUND_USER("해당 회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     // -- 업체 --
     NOT_FOUND_COMPANY("해당 업체를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    DUPLICATE_COMPANY_NAME("같은 허브 내에 동일한 업체명이 이미 존재합니다.", HttpStatus.BAD_REQUEST),
-    INVALID_COMPANY_NAME("업체명은 필수 입력값입니다.", HttpStatus.BAD_REQUEST),
-    COMPANY_NAME_TOO_LONG("업체명은 20자를 초과할 수 없습니다.", HttpStatus.BAD_REQUEST),
-    INVALID_COMPANY_ADDRESS("업체 주소는 필수 입력값입니다.", HttpStatus.BAD_REQUEST),
-    COMPANY_ADDRESS_TOO_LONG("업체 주소는 50자를 초과할 수 없습니다.", HttpStatus.BAD_REQUEST),
     // -- 허브 --
-    NOT_FOUND_HUB("해당 허브를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     // -- 상품 --
     // -- 배송 --
     // -- 주문 --

@@ -2,12 +2,12 @@ package com.qb.companyservice.application.service;
 
 import com.qb.companyservice.application.dto.CompanyCreateRequest;
 import com.qb.companyservice.application.dto.CompanyResponse;
+import com.qb.companyservice.common.enums.CompanyErrorCode;
+import com.qb.companyservice.common.exception.CompanyException;
 import com.qb.companyservice.domain.entity.Company;
 import com.qb.companyservice.domain.entity.CompanyType;
 import com.qb.companyservice.domain.repository.CompanyRepository;
 import com.qb.companyservice.domain.service.CompanyDomainService;
-import com.qb.common.enums.ErrorCode;
-import com.qb.common.exception.CustomException;
 import com.qb.common.response.PageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,9 +44,19 @@ public class CompanyServiceImpl implements CompanyService {
 
     // TODO: 사용자 권한 확인 (현재는 스킵)
 
+    // 임시 UUID 생성 (userId를 UUID로 변환하는 대신)
+    UUID userUuid;
+    try {
+      userUuid = UUID.fromString(userId);
+    } catch (IllegalArgumentException e) {
+      // 유효하지 않은 UUID면 임시로 랜덤 UUID 생성
+      userUuid = UUID.randomUUID();
+      log.warn("유효하지 않은 userId: {}, 임시 UUID 사용: {}", userId, userUuid);
+    }
+
     // 도메인 서비스를 통한 업체 생성
     Company company = companyDomainService.createCompany(
-        UUID.fromString(userId), // 임시로 String을 UUID로 변환
+        userUuid,
         request.getHubId(),
         request.getCompanyName(),
         request.getCompanyType(),
@@ -66,7 +76,7 @@ public class CompanyServiceImpl implements CompanyService {
     log.info("업체 조회 요청 - ID: {}", companyId);
 
     Company company = companyRepository.findByCompanyIdAndDeletedAtIsNull(companyId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_COMPANY));
+        .orElseThrow(() -> new CompanyException(CompanyErrorCode.NOT_FOUND_COMPANY));
 
     log.info("업체 조회 완료 - 업체명: {}", company.getCompanyName());
 
