@@ -30,6 +30,10 @@ public class HubService {
 
         Hub hub = hubRepository.findById(hubId)
                 .orElseThrow(() -> new NotFoundException("해당하는 허브 정보가 없습니다."));
+
+        if (hub.getDeletedAt() != null) {
+            throw new NotFoundException("요청하신 허브(ID: " + hubId + ")는 이미 삭제된 상태입니다.");
+        }
         return GetHubResponse.from(hub);
     }
 
