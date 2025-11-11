@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,12 +47,12 @@ public class ItemController {
 		return ApiResponse.of(SuccessCode.OK, itemService.getItem(itemId));
 	}
 
-	@PatchMapping("/decrease")
+	@PutMapping("/decrease")
 	public ApiResponse<List<ResPatchItemDto>> decreaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
 		return ApiResponse.of(SuccessCode.OK, itemService.decreaseQuantity(itemList));
 	}
 
-	@PatchMapping("/increase")
+	@PutMapping("/increase")
 	public ApiResponse<List<ResPatchItemDto>> increaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
 		return ApiResponse.of(SuccessCode.OK, itemService.increaseQuantity(itemList));
 	}
