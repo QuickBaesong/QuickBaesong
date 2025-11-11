@@ -15,7 +15,6 @@ import java.util.UUID;
 @Builder
 public class DeliveryCreateRequest {
     private UUID orderId;           // 주문 ID
-    private String companyManagerId; // 업체 담당자
     private UUID departureHubId;     // 출발 허브
     private UUID destinationHubId; // 도착 허브
     private String deliveryAddress;  // 배송 주소
@@ -30,7 +29,7 @@ public class DeliveryCreateRequest {
                 .deliveryAddress(deliveryAddress)
                 .recipientName(recipientName)
                 .recipientSlackId(recipientSlackId)
-                .companyManagerId(companyManagerId)
+                .companyManagerId(null) // 나중에 배정
                 .currentStatus(DeliveryStatus.HUB_WAITING) // 최초 상태
                 .build();
     }

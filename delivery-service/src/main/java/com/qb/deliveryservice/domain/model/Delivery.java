@@ -39,8 +39,8 @@ public class Delivery extends BaseEntity {
     @Column(name = "recipient_slack_id", nullable = false)
     private String recipientSlackId; // 슬랙ID
 
-    @Column(name = "company_manager_id", nullable = false)
-    private String companyManagerId; // 업체배송담당자 ID
+    @Column(name = "company_manager_id", columnDefinition = "UUID")
+    private UUID companyManagerId; // 업체 배송 담당자 ID (UUID) 나중에 배정
 
     @Builder
     private Delivery(
@@ -51,7 +51,7 @@ public class Delivery extends BaseEntity {
             String deliveryAddress,
             String recipientName,
             String recipientSlackId,
-            String companyManagerId
+            UUID companyManagerId
     ) {
         this.orderId = orderId;
         this.currentStatus = currentStatus;
@@ -63,6 +63,12 @@ public class Delivery extends BaseEntity {
         this.companyManagerId = companyManagerId;
     }
 
+    /**
+     * 업체 배송 담당자 배정 (나중에 업데이트)
+     */
+    public void assignCompanyManager(UUID companyManagerId) {
+        this.companyManagerId = companyManagerId;
+    }
 
 
 }
