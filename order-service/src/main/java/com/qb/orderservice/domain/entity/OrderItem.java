@@ -53,9 +53,6 @@ public class OrderItem extends BaseEntity {
 		this.order=order;
 	}
 
-	public void updateOrderItem(Long quantity, Long price){
-		this.quantity=quantity;
-		this.price=price;
-	}
+	public void updateOrderItemPrice(Long price){ this.price=price; }
 
 }

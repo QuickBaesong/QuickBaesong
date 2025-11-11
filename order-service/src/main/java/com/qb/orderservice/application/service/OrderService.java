@@ -2,7 +2,9 @@ package com.qb.orderservice.application.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -20,11 +22,14 @@ import com.qb.orderservice.domain.entity.Order;
 import com.qb.orderservice.domain.entity.OrderItem;
 import com.qb.orderservice.domain.repository.OrderRepository;
 import com.qb.orderservice.dto.ReqCreateOrderDto;
+import com.qb.orderservice.dto.ReqPatchOrderItemDto;
 import com.qb.orderservice.dto.ResCreateOrderDto;
 import com.qb.orderservice.dto.ResDeleteOrderDto;
 import com.qb.orderservice.dto.ResGetOrderDto;
+import com.qb.orderservice.dto.ResPatchOrderItemDto;
 
 import feign.FeignException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -132,6 +137,26 @@ public class OrderService {
 
 	}
 
+	@Transactional
+	public ResPatchOrderItemDto patchOrderItem(UUID orderId, UUID orderItemId, @Valid ReqPatchOrderItemDto reqPatchOrderItemDto) {
+		Order order = orderRepository.findByOrderIdAndDeletedAtIsNull(orderId)
+			.orElseThrow(()->new IllegalArgumentException("이미 삭제되거나 존재하지 않는 주문입니다."));
+
+		Map<UUID, OrderItem> orderItemMap = order.getOrderItems()
+											.stream()
+											.collect(Collectors.toMap(OrderItem::getOrderItemId, Function.identity()));
+
+		OrderItem orderItem = orderItemMap.get(orderItemId);
+
+		if (orderItem == null || orderItem.getDeletedAt() != null) {
+			throw new IllegalArgumentException("이미 삭제되거나 주문하지않은 상품입니다.");
+		}
+
+		orderItem.updateOrderItemPrice(reqPatchOrderItemDto.getPrice());
+
+		return ResPatchOrderItemDto.fromEntity(order, orderItem);
+	}
+
 	private void decreaseStockWithRetry(List<ReqUpdateItemStockDto> requestList) {
 		int attempt = 0;
 		while (attempt < MAX_RETRIES) {
@@ -152,6 +177,7 @@ public class OrderService {
 		log.error("ItemService.decreaseQuantity 호출 최종 실패.");
 		throw new RuntimeException("재고 감소 서비스에 연결할 수 없습니다.");
 	}
+
 	private ResCreateDeliveryDto createDeliveryWithRetry(UUID orderId, ReqCreateOrderDto requestDto, List<OrderItem> succeededItems) {
 		ReqCreateDeliveryDto reqCreateDeliveryDto = ReqCreateDeliveryDto.fromOrderCreation(
 			orderId,
@@ -202,5 +228,4 @@ public class OrderService {
 			Thread.currentThread().interrupt();
 		}
 	}
-
 }
