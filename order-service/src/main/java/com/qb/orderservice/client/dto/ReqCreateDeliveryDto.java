@@ -1,8 +1,10 @@
 package com.qb.orderservice.client.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.qb.orderservice.domain.entity.OrderItem;
 import com.qb.orderservice.dto.ReqCreateOrderDto;
@@ -23,13 +25,18 @@ public class ReqCreateDeliveryDto {
 	private String recipientName;
 	private String recipientSlackId;
 	private LocalDateTime requiredDeliveryAt;
-	private List<OrderItem> orderItems;
+	private List<ReqCreateDeliveryDto.OrderItemDto> orderItems;
 
 	public static ReqCreateDeliveryDto fromOrderCreation(
 		UUID orderId,
 		ReqCreateOrderDto requestDto,
 		List<OrderItem> orderItemList
 	) {
+
+		List<ReqCreateDeliveryDto.OrderItemDto> orderItems = orderItemList.stream()
+			.map(ReqCreateDeliveryDto.OrderItemDto::fromOrderItem)
+			.collect(Collectors.toList());
+
 		return new ReqCreateDeliveryDto(
 			orderId,
 			requestDto.getSender(),
@@ -39,7 +46,27 @@ public class ReqCreateDeliveryDto {
 			requestDto.getRecipientName(),
 			requestDto.getRecipientSlackId(),
 			requestDto.getRequiredDeliveryAt(),
-			orderItemList
+			orderItems
 		);
+	}
+
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class OrderItemDto {
+		private UUID orderItemId;
+		private UUID itemId;
+		private Long quantity;
+		private Long price;
+
+		public static OrderItemDto fromOrderItem(OrderItem orderItem) {
+			return new OrderItemDto(
+				orderItem.getOrderItemId(),
+				orderItem.getItemId(),
+				orderItem.getQuantity(),
+				orderItem.getPrice()
+			);
+		}
+
 	}
 }
