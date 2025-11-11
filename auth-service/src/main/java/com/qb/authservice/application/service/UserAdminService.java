@@ -4,6 +4,7 @@ import com.qb.authservice.application.component.AuthComponent;
 import com.qb.authservice.domain.entity.User;
 import com.qb.authservice.domain.entity.UserRole;
 import com.qb.authservice.domain.repository.UserRepository;
+import com.qb.authservice.exception.AuthErrorCode;
 import com.qb.authservice.presentation.dto.request.SignupRequest;
 import com.qb.authservice.presentation.dto.response.SignupResponse;
 import com.qb.common.enums.ErrorCode;
@@ -36,13 +37,13 @@ public class UserAdminService {
 
     public void validateDuplicatedUser(String username) {
         if (userRepository.existsByUsername(username)) {
-            throw new CustomException(ErrorCode.DUPLICATE_ID);
+            throw new CustomException(AuthErrorCode.DUPLICATE_ID);
         }
     }
     // MASTER 권한 검증
     public void validateMasterRole(UserRole role) {
         if (role != UserRole.MASTER) {
-            throw new CustomException(ErrorCode.INVALID_MASTER_ROLE);
+            throw new CustomException(AuthErrorCode.INVALID_MASTER_ROLE);
         }
     }
 }

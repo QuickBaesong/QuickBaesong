@@ -3,6 +3,7 @@ package com.qb.authservice.application.service;
 import com.qb.authservice.application.component.AuthComponent;
 import com.qb.authservice.domain.entity.User;
 import com.qb.authservice.domain.repository.UserRepository;
+import com.qb.authservice.exception.AuthErrorCode;
 import com.qb.authservice.presentation.dto.request.SignupRequest;
 import com.qb.authservice.presentation.dto.response.SignupResponse;
 import com.qb.common.enums.ErrorCode;
@@ -36,7 +37,7 @@ public class AuthService {
 
     public void validateDuplicatedUser(String username) {
         if (userRepository.existsByUsername(username)) {
-            throw new CustomException(ErrorCode.DUPLICATE_ID);
+            throw new CustomException(AuthErrorCode.DUPLICATE_ID);
         }
     }
 }
