@@ -20,6 +20,7 @@ import com.qb.itemservice.domain.service.CompanyHubPolicy;
 import com.qb.itemservice.dto.ReqCreateItemDto;
 import com.qb.itemservice.dto.ReqPatchItemDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
+import com.qb.itemservice.dto.ResDeleteItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
 import com.qb.itemservice.dto.ResPatchItemDto;
 
@@ -122,5 +123,16 @@ public class ItemService {
 			.toList();
 	}
 
+	@Transactional
+	public ResDeleteItemDto deleteItem(UUID itemId) {
 
+		Item item = itemRepository.findByItemIdAndDeletedAtIsNull(itemId).orElseThrow(()->new IllegalArgumentException("이미 삭제되었거나 존재하지 않는 상품입니다."));
+
+		// user 소속 업체/허브와 아이템 허브/아이디 비교
+
+		item.softDelete("");
+
+		return ResDeleteItemDto.fromEntity(item);
+
+	}
 }
