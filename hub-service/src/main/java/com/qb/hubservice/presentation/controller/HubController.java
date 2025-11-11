@@ -34,13 +34,7 @@ public class HubController {
         return ResponseEntity.ok(ApiResponse.of(SuccessCode.OK, response));
     }
 
-    //더미데이터 api 호출
-    @PostMapping("/dummy")
-    public ResponseEntity<ApiResponse<GetHubResponse>> createDummyHub(@RequestBody @Valid CreateHubRequest request) {
-        GetHubResponse response = hubService.createHub(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.of(SuccessCode.CREATED, response));
-    }
+    //@PostMapping("/dummy")
 
 
 
