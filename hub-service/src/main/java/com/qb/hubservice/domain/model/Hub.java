@@ -12,8 +12,6 @@ import lombok.*;
 @Table(name = "p_hub")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-
 public class Hub extends BaseEntity {
 
     @Id

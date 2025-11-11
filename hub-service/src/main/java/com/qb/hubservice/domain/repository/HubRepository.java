@@ -12,7 +12,6 @@ import java.util.UUID;
 
 public interface HubRepository extends JpaRepository<Hub, UUID> {
 
-    // 1. 삭제되지 않은 단건 정보 조회 (getHub에 사용)
 
     Optional<Hub> findByIdAndIsDeletedFalse(UUID id);
 
@@ -20,8 +19,5 @@ public interface HubRepository extends JpaRepository<Hub, UUID> {
     Page<Hub> findAllByIsDeletedFalse(Pageable pageable);
 
 
-    //Page<Hub> searchHubs(
-            //@Param("name") String name,
-            //Pageable pageable);
 
 }

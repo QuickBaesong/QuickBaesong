@@ -10,8 +10,6 @@ import java.util.UUID;
 @Table(name = "p_hub_route")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class HubRoute extends BaseEntity {
 
     @Id

@@ -2,6 +2,7 @@ package com.qb.hubservice.presentation.request;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.qb.hubservice.domain.model.Hub;
 import com.qb.hubservice.domain.vo.Location;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -49,4 +50,10 @@ public class CreateHubRequest {
                 .build();
     }
 
+    public Hub toHub() {
+        return Hub.builder()
+                .hubName(this.hubName)
+                .location(this.toLocationVo()) // Location VO 포함
+                .build();
+    }
 }

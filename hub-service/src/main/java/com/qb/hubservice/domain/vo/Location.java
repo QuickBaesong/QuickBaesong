@@ -24,7 +24,7 @@ public class Location {
 
     @Builder
     public Location(String address, BigDecimal latitude, BigDecimal longitude) {
-        validate(address, latitude, longitude); // 생성 시 유효성 검사 실행
+        validate(address, latitude, longitude);
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;

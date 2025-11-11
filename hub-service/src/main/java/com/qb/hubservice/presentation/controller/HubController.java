@@ -20,7 +20,7 @@ public class HubController {
 
     private final HubService hubService;
 
-     //허브 정보 생성
+
 
     @PostMapping
     public ResponseEntity<ApiResponse<GetHubResponse>> createHub(@RequestBody @Valid CreateHubRequest request) {
@@ -29,13 +29,14 @@ public class HubController {
                 .body(ApiResponse.of(SuccessCode.CREATED, response));
     }
 
-     //허브 단건 정보 조회
 
     @GetMapping("/{hubId}")
     public ResponseEntity<ApiResponse<GetHubResponse>> getHub(@PathVariable UUID hubId) {
         GetHubResponse response = hubService.getHub(hubId);
         return ResponseEntity.ok(ApiResponse.of(SuccessCode.OK, response));
     }
+
+
 
 
 }
