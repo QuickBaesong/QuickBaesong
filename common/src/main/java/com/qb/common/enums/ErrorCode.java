@@ -12,6 +12,7 @@ public enum ErrorCode {
     // -- 인증 --
     NOT_VALID_TOKEN("유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED),
     // -- 회원 --
+    DUPLICATE_ID("이미 사용 중인 아이디입니다.", HttpStatus.CONFLICT),
     NOT_FOUND_USER("해당 회원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     // -- 업체 --
     NOT_FOUND_COMPANY("해당 업체를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),

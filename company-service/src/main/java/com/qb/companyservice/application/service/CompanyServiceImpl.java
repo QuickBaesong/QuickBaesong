@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -32,39 +33,34 @@ public class CompanyServiceImpl implements CompanyService {
 
   private final CompanyRepository companyRepository;
   private final CompanyDomainService companyDomainService;
-  // private final HubClient hubClient; // 추후 구현
+
+  // 🔒 정렬 가능한 필드 목록 (보안을 위한 화이트리스트)
+  private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+      "companyName", "companyType", "createdAt", "updatedAt", "hubId"
+  );
 
   @Override
   @Transactional
   public CompanyResponse createCompany(CompanyCreateRequest request, String userId) {
     log.info("업체 생성 요청 - 사용자: {}, 업체명: {}", userId, request.getCompanyName());
 
-    // TODO: Hub 존재 여부 확인
-    // validateHubExists(request.getHubId());
-
-    // TODO: 사용자 권한 확인 (현재는 스킵)
-
-    // 임시 UUID 생성 (userId를 UUID로 변환하는 대신)
+    // 🛡️ UUID 파싱 예외 처리 강화
     UUID userUuid;
     try {
       userUuid = UUID.fromString(userId);
     } catch (IllegalArgumentException e) {
-      // 유효하지 않은 UUID면 임시로 랜덤 UUID 생성
-      userUuid = UUID.randomUUID();
-      log.warn("유효하지 않은 userId: {}, 임시 UUID 사용: {}", userId, userUuid);
+      log.warn("유효하지 않은 userId: {}. 업체 생성을 중단합니다.", userId);
+      throw new IllegalArgumentException("유효하지 않은 형식의 사용자 ID입니다.");
     }
 
-    // 도메인 서비스를 통한 업체 생성
-    Company company = companyDomainService.createCompany(
-        userUuid,
-        request.getHubId(),
-        request.getCompanyName(),
-        request.getCompanyType(),
-        request.getCompanyAddress()
-    );
+    // ✨ DTO에서 Entity로 변환 (팀원 제안 반영)
+    Company company = request.toEntity(userUuid);
+
+    // 도메인 서비스를 통한 비즈니스 규칙 검증
+    Company validatedCompany = companyDomainService.validateAndPrepareCompany(company);
 
     // 저장
-    Company savedCompany = companyRepository.save(company);
+    Company savedCompany = companyRepository.save(validatedCompany);
 
     log.info("업체 생성 완료 - ID: {}, 업체명: {}", savedCompany.getCompanyId(), savedCompany.getCompanyName());
 
@@ -75,6 +71,7 @@ public class CompanyServiceImpl implements CompanyService {
   public CompanyResponse findById(UUID companyId) {
     log.info("업체 조회 요청 - ID: {}", companyId);
 
+    // ✅ 수정된 메서드명 사용
     Company company = companyRepository.findByCompanyIdAndDeletedAtIsNull(companyId)
         .orElseThrow(() -> new CompanyException(CompanyErrorCode.NOT_FOUND_COMPANY));
 
@@ -86,29 +83,55 @@ public class CompanyServiceImpl implements CompanyService {
   @Override
   public PageResponse<CompanyResponse> findCompanies(String name, CompanyType type, UUID hubId,
       String sortBy, int page, int size) {
-    log.info("업체 목록 조회 요청 - name: {}, type: {}, hubId: {}, page: {}, size: {}",
-        name, type, hubId, page, size);
+    log.info("업체 목록 조회 요청 - name: {}, type: {}, hubId: {}, page: {}, size: {}, sortBy: {}",
+        name, type, hubId, page, size, sortBy);
+
+    // 🔒 정렬 필드 검증 (보안 강화)
+    String validatedSortBy = validateSortField(sortBy);
 
     // 정렬 설정
-    Sort sort = Sort.by(Sort.Direction.ASC, sortBy != null ? sortBy : "companyName");
+    Sort sort = Sort.by(Sort.Direction.DESC, validatedSortBy);
     Pageable pageable = PageRequest.of(page, size, sort);
 
-    // 검색 실행
-    Page<Company> companies = companyRepository.findCompaniesWithFilters(name, type, hubId, pageable);
+    Page<Company> companies;
+
+    // ✅ 수정된 Repository 메서드들 사용
+    if (name != null && !name.trim().isEmpty()) {
+      companies = companyRepository.findByDeletedAtIsNullAndCompanyNameContainingIgnoreCase(name, pageable);
+    } else if (type != null) {
+      companies = companyRepository.findByDeletedAtIsNullAndCompanyType(type, pageable);
+    } else if (hubId != null) {
+      companies = companyRepository.findByDeletedAtIsNullAndHubId(hubId, pageable);
+    } else {
+      // 전체 조회는 동적 쿼리 사용 (더 효율적)
+      companies = companyRepository.findCompaniesWithFilters(null, null, null, pageable);
+    }
 
     // DTO 변환
     Page<CompanyResponse> responses = companies.map(CompanyResponse::from);
 
-    log.info("업체 목록 조회 완료 - 총 {}건, 현재 페이지: {}/{}",
-        responses.getTotalElements(), page + 1, responses.getTotalPages());
+    log.info("업체 목록 조회 완료 - 총 {}건, 현재 페이지: {}/{}, 정렬: {}",
+        responses.getTotalElements(), page + 1, responses.getTotalPages(), validatedSortBy);
 
     return PageResponse.from(responses);
   }
 
-  // 추후 구현 예정
-  // private void validateHubExists(UUID hubId) {
-  //     if (!hubClient.existsById(hubId)) {
-  //         throw new CustomException(ErrorCode.NOT_FOUND_HUB);
-  //     }
-  // }
+  /**
+   * 🔒 정렬 필드 유효성 검증
+   * @param sortBy 요청된 정렬 필드
+   * @return 검증된 정렬 필드
+   */
+  private String validateSortField(String sortBy) {
+    if (sortBy == null || sortBy.trim().isEmpty()) {
+      return "createdAt"; // 기본 정렬: 최신순
+    }
+
+    String trimmedSortBy = sortBy.trim();
+    if (ALLOWED_SORT_FIELDS.contains(trimmedSortBy)) {
+      return trimmedSortBy;
+    }
+
+    log.warn("허용되지 않은 정렬 필드 요청: {}. 기본 정렬(createdAt) 사용.", sortBy);
+    return "createdAt";
+  }
 }

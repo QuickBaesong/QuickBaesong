@@ -9,51 +9,65 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * 업체 Repository
- * 업체 데이터 접근을 담당합니다.
- */
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, UUID> {
 
   /**
-   * 삭제되지 않은 업체를 ID로 조회
+   * 업체 ID로 삭제되지 않은 업체 조회
+   * @param companyId 업체 ID
+   * @return 업체 정보
    */
   Optional<Company> findByCompanyIdAndDeletedAtIsNull(UUID companyId);
 
   /**
-   * 특정 허브에 속한 삭제되지 않은 업체 목록 조회
+   * 삭제되지 않은 모든 업체 조회 (페이징)
+   * @param pageable 페이징 정보
+   * @return 업체 목록
    */
-  List<Company> findByHubIdAndDeletedAtIsNull(UUID hubId);
+  Page<Company> findByDeletedAtIsNull(Pageable pageable);
 
   /**
-   * 업체 타입별 삭제되지 않은 업체 목록 조회
+   * 업체명으로 검색 (대소문자 무시, 부분 일치)
+   * @param name 업체명
+   * @param pageable 페이징 정보
+   * @return 업체 목록
    */
-  List<Company> findByCompanyTypeAndDeletedAtIsNull(CompanyType companyType);
+  Page<Company> findByDeletedAtIsNullAndCompanyNameContainingIgnoreCase(String name, Pageable pageable);
 
   /**
-   * 복합 조건으로 업체 검색 (페이징 지원)
+   * 업체 타입으로 검색
+   * @param type 업체 타입
+   * @param pageable 페이징 정보
+   * @return 업체 목록
    */
-  @Query("SELECT c FROM Company c WHERE c.deletedAt IS NULL " +
-      "AND (:name IS NULL OR LOWER(c.companyName) LIKE LOWER(CONCAT('%', :name, '%'))) " +
-      "AND (:type IS NULL OR c.companyType = :type) " +
-      "AND (:hubId IS NULL OR c.hubId = :hubId)")
+  Page<Company> findByDeletedAtIsNullAndCompanyType(CompanyType type, Pageable pageable);
+
+  /**
+   * 허브 ID로 검색
+   * @param hubId 허브 ID
+   * @param pageable 페이징 정보
+   * @return 업체 목록
+   */
+  Page<Company> findByDeletedAtIsNullAndHubId(UUID hubId, Pageable pageable);
+
+  /**
+   * 복합 조건 검색 (동적 쿼리)
+   * @param name 업체명 (선택)
+   * @param type 업체 타입 (선택)
+   * @param hubId 허브 ID (선택)
+   * @param pageable 페이징 정보
+   * @return 업체 목록
+   */
+  @Query("SELECT c FROM Company c WHERE " +
+      "(:name IS NULL OR LOWER(c.companyName) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+      "(:type IS NULL OR c.companyType = :type) AND " +
+      "(:hubId IS NULL OR c.hubId = :hubId) AND " +
+      "c.deletedAt IS NULL")
   Page<Company> findCompaniesWithFilters(@Param("name") String name,
       @Param("type") CompanyType type,
       @Param("hubId") UUID hubId,
       Pageable pageable);
-
-  /**
-   * 업체명 중복 체크 (같은 허브 내에서)
-   */
-  boolean existsByHubIdAndCompanyNameAndDeletedAtIsNull(UUID hubId, String companyName);
-
-  /**
-   * 특정 사용자가 관리하는 업체 조회
-   */
-  Optional<Company> findByUserIdAndDeletedAtIsNull(UUID userId);
 }
