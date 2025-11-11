@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.qb.common"})
+@ComponentScan(basePackages = {"com.qb.common", "com.qb.companyservice"})
 @EnableJpaAuditing  // 이 어노테이션 추가
 public class CompanyServiceApplication {
 
