@@ -15,7 +15,7 @@ import com.qb.common.response.ApiResponse;
 import com.qb.orderservice.client.DeliveryServiceClient;
 import com.qb.orderservice.client.ItemServiceClient;
 import com.qb.orderservice.client.dto.ReqCreateDeliveryDto;
-import com.qb.orderservice.client.dto.ReqUpdateItemStockDto;
+import com.qb.orderservice.client.dto.ReqPatchItemDto;
 import com.qb.orderservice.client.dto.ResCreateDeliveryDto;
 import com.qb.orderservice.client.dto.ResGetItemDto;
 import com.qb.orderservice.domain.entity.Order;
@@ -50,10 +50,7 @@ public class OrderService {
 	@Transactional
 	public ResCreateOrderDto createOrder(ReqCreateOrderDto requestDto) {
 
-		// 주문 생성은 업체 담당자만 가능하다. role 검증
-		// if (userRole != UserRole.COMPANY_MANAGER) {
-		// 	throw new AccessDeniedException("업체 담당자만 주문을 생성할 수 있습니다.");
-		// }
+		// TODO : sender 직원 / receiver 직원 검증
 
 		List<OrderItem> orderItems = new ArrayList<>();
 		Order order = null;
@@ -84,13 +81,14 @@ public class OrderService {
 
 			orderRepository.save(order);
 
-			List<ReqUpdateItemStockDto> decreaseList = requestDto.getOrderItems().stream()
+			List<ReqPatchItemDto> decreaseList = requestDto.getOrderItems().stream()
 				.map(ReqCreateOrderDto.OrderItemDto::toReqUpdateItemStockDto)
 				.collect(Collectors.toList());
 
 			this.decreaseStockWithRetry(decreaseList);
 
-			ResCreateDeliveryDto delivery = this.createDeliveryWithRetry(order.getOrderId(), requestDto, orderItems);
+			// TO DO : 로그인 userName 가져오기
+			ResCreateDeliveryDto delivery = this.createDeliveryWithRetry(order.getOrderId(), requestDto, "tester");
 			order.updateDeliveryInfo(delivery.getDeliveryId());
 
 			ResCreateOrderDto resCreateOrderDto = ResCreateOrderDto.fromEntity(order, delivery);
@@ -157,7 +155,7 @@ public class OrderService {
 		return ResPatchOrderItemDto.fromEntity(order, orderItem);
 	}
 
-	private void decreaseStockWithRetry(List<ReqUpdateItemStockDto> requestList) {
+	private void decreaseStockWithRetry(List<ReqPatchItemDto> requestList) {
 		int attempt = 0;
 		while (attempt < MAX_RETRIES) {
 			try {
@@ -178,18 +176,18 @@ public class OrderService {
 		throw new RuntimeException("재고 감소 서비스에 연결할 수 없습니다.");
 	}
 
-	private ResCreateDeliveryDto createDeliveryWithRetry(UUID orderId, ReqCreateOrderDto requestDto, List<OrderItem> succeededItems) {
+	private ResCreateDeliveryDto createDeliveryWithRetry(UUID orderId, ReqCreateOrderDto requestDto, String companyManagerId) {
 		ReqCreateDeliveryDto reqCreateDeliveryDto = ReqCreateDeliveryDto.fromOrderCreation(
 			orderId,
 			requestDto,
-			succeededItems
+			companyManagerId
 		);
 
 		int attempt = 0;
 		while (attempt < MAX_RETRIES) {
 			try {
 				ApiResponse<ResCreateDeliveryDto> response = deliveryServiceClient.createDelivery(reqCreateDeliveryDto);
-				if (response.getData() == null || response.getCode() != SuccessCode.OK) {
+				if (response.getData() == null) {
 					throw new IllegalArgumentException("배송 요청 처리에 실패했습니다");
 				}
 				return response.getData();
@@ -209,8 +207,8 @@ public class OrderService {
 
 	private void compensateStock(List<OrderItem> orderItems, UUID orderId) {
 
-		List<ReqUpdateItemStockDto> increaseList = orderItems.stream()
-			.map(item -> ReqUpdateItemStockDto.fromEntity(item))
+		List<ReqPatchItemDto> increaseList = orderItems.stream()
+			.map(item -> ReqPatchItemDto.fromEntity(item))
 			.collect(Collectors.toList());
 
 		try {
