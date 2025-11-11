@@ -19,9 +19,6 @@ public interface HubRepository extends JpaRepository<Hub, UUID> {
 
     Page<Hub> findAllByIsDeletedFalse(Pageable pageable);
 
-    @Query("SELECT h FROM Hub h " +
-            "WHERE h.isDeleted = FALSE " +
-            "AND (:#{#name} IS NULL OR :#{#name} = '' OR LOWER(h.name) LIKE LOWER(CONCAT('%', :name, '%')))")
 
     Page<Hub> searchHubs(
             @Param("name") String name,
