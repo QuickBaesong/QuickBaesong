@@ -7,6 +7,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,6 +158,17 @@ public class OrderService {
 		orderItem.updateOrderItemPrice(reqPatchOrderItemDto.getPrice());
 
 		return ResPatchOrderItemDto.fromEntity(order, orderItem);
+	}
+
+	public Page<ResGetOrderDto> searchOrders(Pageable pageable) {
+		//UserRole role = userContext.currentUserRole();
+		//UUID currentUserId = userContext.currentUserId();
+
+		Page<Order> orderPage;
+
+		orderPage = orderRepository.findAllByDeletedAtIsNull(pageable);
+
+		return orderPage.map(ResGetOrderDto::fromEntity);
 	}
 
 	private void decreaseStockWithRetry(List<ReqPatchItemDto> requestList) {
