@@ -6,11 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
 
 import java.util.UUID;
 
-@Getter
 public record SignupRequest (
     @NotBlank(message = "아이디는 필수 입력 사항입니다.")
     @Pattern(regexp = "^[a-z0-9]{4,10}$",
@@ -20,8 +18,8 @@ public record SignupRequest (
 
     @NotBlank(message = "비밀번호는 필수 입력 사항입니다.")
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,15}$", //TODO: 수정
-            message = "비밀번호는 알파벳 대소문자, 숫자, 특수문자(@$!%*?&)를 포함해야 합니다.")
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,15}$",
+            message = "비밀번호는 알파벳 대소문자, 숫자, 특수문자(@$!%*?&#)를 포함해야 합니다.")
     @Size(min = 8, max = 15, message = "비밀번호는 최소 8자 이상, 15자 이하입니다.")
     String password,
 

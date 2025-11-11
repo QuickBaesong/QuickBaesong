@@ -31,7 +31,7 @@ public class AuthService {
         User user = request.toEntity(encodedPassword, request.role().isDefaultApproval());
         userRepository.save(user);
 
-        return SignupResponse.from(user); // TODO: 리턴 내용 변경
+        return SignupResponse.from(user);
     }
 
     public void validateDuplicatedUser(String username) {

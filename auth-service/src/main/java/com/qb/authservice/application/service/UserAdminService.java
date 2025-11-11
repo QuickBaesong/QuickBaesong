@@ -20,9 +20,10 @@ public class UserAdminService {
     private final UserRepository userRepository;
     private final AuthComponent authComponent;
 
+    //TODO: createBy에 master id 받아서 입력
     @Transactional
     public SignupResponse createUser(SignupRequest request) {
-        validateMasterRole(request.role());
+//        validateMasterRole(role); // request의 role이 아니라 로그인한 유저의 role
         validateDuplicatedUser(request.username());
         String encodedPassword = authComponent.encodePassword(request.password());
 
