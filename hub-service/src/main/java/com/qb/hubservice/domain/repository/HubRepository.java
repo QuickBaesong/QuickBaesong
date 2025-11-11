@@ -20,8 +20,8 @@ public interface HubRepository extends JpaRepository<Hub, UUID> {
     Page<Hub> findAllByIsDeletedFalse(Pageable pageable);
 
 
-    Page<Hub> searchHubs(
-            @Param("name") String name,
-            Pageable pageable);
+    //Page<Hub> searchHubs(
+            //@Param("name") String name,
+            //Pageable pageable);
 
 }
