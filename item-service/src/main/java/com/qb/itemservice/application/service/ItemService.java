@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.qb.common.response.ApiResponse;
 import com.qb.itemservice.client.CompanyServiceClient;
 import com.qb.itemservice.client.HubServiceClient;
 import com.qb.itemservice.client.dto.ResGetCompanyDto;
@@ -40,10 +41,12 @@ public class ItemService {
 	public ResCreateItemDto createItem(ReqCreateItemDto requestDto) {
 
 		// company 조회
-		ResGetCompanyDto company = companyServiceClient.getCompany(requestDto.getCompanyId());
+		ApiResponse<ResGetCompanyDto> companyResponse = companyServiceClient.getCompany(requestDto.getCompanyId());
+		ResGetCompanyDto company = companyResponse.getData();
 
 		// hub 조회
-		ResGetHubDto hub = hubServiceClient.getHub(requestDto.getHubId());
+		ApiResponse<ResGetHubDto> hubResponse = hubServiceClient.getHub(requestDto.getHubId());
+		ResGetHubDto hub =  hubResponse.getData();
 
 		companyHubPolicy.validateCompanyBelongsToHub(company.getHubId(), hub.getHubId());
 

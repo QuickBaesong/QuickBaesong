@@ -18,8 +18,6 @@ public class ReqPatchItemDto {
 	private Long quantity;
 
 	public Item toEntity(){
-		return Item.builder()
-
-			.build();
+		return new Item(itemId, quantity);
 	}
 }
