@@ -21,15 +21,15 @@ spring:
       hibernate:
         format_sql: true
         highlight_sql: true
-data:
-  redis:
-    # Redis 서버가 실행되는 호스트 (일반적으로 로컬)
-    host: localhost
-    # Redis 서버 포트 번호 (기본값)
-    port: 6379
-    # database: 0 # 기본 DB 인덱스 (필요 시 주석 해제)
-
-# 6. Redisson 클라이언트 설정 (분산 락/캐싱 사용 시)
-redisson:
-  singleServer:
-    address: redis://localhost:6379
+#data:
+#  redis:
+#    # Redis 서버가 실행되는 호스트 (일반적으로 로컬)
+#    host: localhost
+#    # Redis 서버 포트 번호 (기본값)
+#    port: 6379
+#    # database: 0 # 기본 DB 인덱스 (필요 시 주석 해제)
+#
+## 6. Redisson 클라이언트 설정 (분산 락/캐싱 사용 시)
+#redisson:
+#  singleServer:
+#    address: redis://localhost:6379

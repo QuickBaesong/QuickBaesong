@@ -9,7 +9,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // 레디스
-    implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
+    //implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
