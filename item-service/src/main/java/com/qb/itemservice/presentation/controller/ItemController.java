@@ -48,7 +48,7 @@ public class ItemController {
 
 	@PatchMapping("/increase")
 	public ApiResponse<List<ResPatchItemDto>> increaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
-		return ApiResponse.of(SuccessCode.OK, itemService.decreaseQuantity(itemList));
+		return ApiResponse.of(SuccessCode.OK, itemService.increaseQuantity(itemList));
 	}
 
 
