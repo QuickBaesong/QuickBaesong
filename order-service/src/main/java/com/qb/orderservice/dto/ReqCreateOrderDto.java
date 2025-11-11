@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.qb.orderservice.client.dto.ReqUpdateItemStockDto;
+import com.qb.orderservice.client.dto.ReqPatchItemDto;
 import com.qb.orderservice.domain.entity.Order;
 import com.qb.orderservice.domain.entity.OrderItem;
 
@@ -26,6 +26,9 @@ public class ReqCreateOrderDto {
 
 	@NotNull(message = "관리 허브를 비워둘 수 없습니다.")
 	private UUID hubId;
+
+	@NotNull(message = "도착 허브를 비워둘 수 없습니다.")
+	private UUID destinationHubId;
 
 	@NotNull(message = "공급 업체를 비워둘 수 없습니다.")
 	private UUID sender;
@@ -59,8 +62,8 @@ public class ReqCreateOrderDto {
 		@Positive(message = "가격은 1개 미만일 수 없습니다.")
 		private Long price;
 
-		public ReqUpdateItemStockDto toReqUpdateItemStockDto() {
-			return new ReqUpdateItemStockDto(this.itemId, this.quantity);
+		public ReqPatchItemDto toReqUpdateItemStockDto() {
+			return new ReqPatchItemDto(this.itemId, this.quantity);
 		}
 
 		public OrderItem toEntity() {

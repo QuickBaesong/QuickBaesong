@@ -67,7 +67,7 @@ public class ResCreateOrderDto {
 			deliveryDto.getDeliveryAddress(),
 			deliveryDto.getRecipientSlackId(),
 			deliveryDto.getRecipientName(),
-			deliveryDto.getRequiredDeliveryAt()
+			order.getRequiredDeliveryAt()
 		);
 	}
 }

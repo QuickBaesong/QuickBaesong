@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReqUpdateItemStockDto {
+public class ReqPatchItemDto {
 	private UUID itemId;
 	private Long quantity;
 
-	public static ReqUpdateItemStockDto fromEntity(OrderItem orderItem) {
-		return new ReqUpdateItemStockDto(
+	public static ReqPatchItemDto fromEntity(OrderItem orderItem) {
+		return new ReqPatchItemDto(
 			orderItem.getItemId(),
 			orderItem.getQuantity()
 		);
