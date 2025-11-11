@@ -24,7 +24,6 @@ public class DeliveryCreateRequest {
 
     public Delivery toEntity() {
         return Delivery.builder()
-                .id(UUID.randomUUID())
                 .orderId(orderId)
                 .departureHubId(departureHubId)
                 .destinationHubId(destinationHubId)
