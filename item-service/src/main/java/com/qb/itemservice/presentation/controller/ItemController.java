@@ -22,10 +22,12 @@ import com.qb.common.response.PageResponse;
 import com.qb.itemservice.application.service.ItemService;
 import com.qb.itemservice.dto.ReqCreateItemDto;
 import com.qb.itemservice.dto.ReqPatchItemDto;
+import com.qb.itemservice.dto.ReqUpdateItemInfoDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
 import com.qb.itemservice.dto.ResDeleteItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
 import com.qb.itemservice.dto.ResPatchItemDto;
+import com.qb.itemservice.dto.ResUpdateItemInfoDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -62,4 +64,8 @@ public class ItemController {
 		return ApiResponse.of(SuccessCode.OK, itemService.deleteItem(itemId));
 	}
 
+	@PatchMapping("/{itemId}")
+	public ApiResponse<ResUpdateItemInfoDto> updateItemInfo(@PathVariable("itemId") UUID itemId, @RequestBody @Valid ReqUpdateItemInfoDto requestDto){
+		return ApiResponse.of(SuccessCode.OK, itemService.updateItemInfo(itemId, requestDto));
+	}
 }

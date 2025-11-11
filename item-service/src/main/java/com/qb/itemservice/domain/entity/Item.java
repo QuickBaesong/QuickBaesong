@@ -57,6 +57,12 @@ public class Item extends BaseEntity {
 		this.quantity = quantity;
 	}
 
+	public Item(UUID itemId, Long price, String itemName) {
+		this.itemId = itemId;
+		this.price = price;
+		this.itemName = itemName;
+	}
+
 	public void decreaseStock(Long amount){
 		if (amount <= 0){
 			throw new ItemCustomException(ItemErrorCode.INVALID_INPUT);
@@ -72,11 +78,16 @@ public class Item extends BaseEntity {
 		this.quantity += amount;
 	}
 
-	public void updatePrice(Long newPrice){
-		if(this.price == newPrice){
+	public void updateInfo(Long newPrice, String newItemName){
+		boolean isPriceUnchanged = this.price.equals(newPrice);
+		boolean isItemNameUnchanged = this.itemName.equals(newItemName);
+
+		if(isPriceUnchanged && isItemNameUnchanged){
 			throw new ItemCustomException(ItemErrorCode.INVALID_INPUT);
 		}
+
 		this.price = newPrice;
+		this.itemName = newItemName;
 	}
 
 }
