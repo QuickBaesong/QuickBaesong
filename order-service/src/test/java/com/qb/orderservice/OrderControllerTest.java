@@ -4,6 +4,7 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class OrderControllerTest {
 		ReqCreateOrderDto.OrderItemDto orderItemDtoTwo = new ReqCreateOrderDto.OrderItemDto(
 			testItemTwo,
 			testItemTwoQuantity,
-			testItemOnePrice
+			testItemTwoPrice
 		);
 
 		orderItems.add(orderItemDtoOne);
@@ -95,12 +96,23 @@ public class OrderControllerTest {
 			recipientName
 		);
 
-		List<OrderItem> orderItemList = new ArrayList<>();
+		List<ResCreateOrderDto.ResOrderItemDto> orderItemList = new ArrayList<>();
 
 		OrderItem orderItemOne = new OrderItem(testItemOne, testItemOneQuantity, testItemOnePrice);
-		orderItemList.add(orderItemOne);
+		ResCreateOrderDto.ResOrderItemDto orderItemDto1 = ResCreateOrderDto.ResOrderItemDto.fromEntity(orderItemOne);
+		orderItemList.add(orderItemDto1);
 		OrderItem orderItemTwo = new OrderItem(testItemTwo, testItemTwoQuantity,testItemTwoPrice);
-		orderItemList.add(orderItemTwo);
+		ResCreateOrderDto.ResOrderItemDto orderItemDto2 = ResCreateOrderDto.ResOrderItemDto.fromEntity(orderItemTwo);
+		orderItemList.add(orderItemDto2);
+
+		DecimalFormat df = new DecimalFormat("#,###");
+
+		// 1. totalPrice (총 가격): (가격 * 수량)의 합계를 계산
+		long totalPriceValue = (testItemOnePrice * testItemOneQuantity) +
+			(testItemTwoPrice * testItemTwoQuantity);
+
+		// 2. totalAmount (총 수량): 수량의 합계를 계산
+		long totalAmountValue = testItemOneQuantity + testItemTwoQuantity;
 
 		ResCreateOrderDto resCreateOrderDto = new ResCreateOrderDto(
 			orderId,
@@ -108,8 +120,8 @@ public class OrderControllerTest {
 			sender,
 			receiver,
 			orderItemList,
-			Long.toString(testItemOnePrice * testItemOneQuantity)+(testItemTwoPrice+testItemTwoQuantity),
-			Long.toString(testItemOneQuantity + testItemTwoQuantity),
+			df.format(totalAmountValue),
+			df.format(totalPriceValue),
 			testAddress,
 			testSlackId,
 			recipientName,
