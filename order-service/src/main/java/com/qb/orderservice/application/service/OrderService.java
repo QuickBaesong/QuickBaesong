@@ -21,6 +21,8 @@ import com.qb.orderservice.domain.entity.OrderItem;
 import com.qb.orderservice.domain.repository.OrderRepository;
 import com.qb.orderservice.dto.ReqCreateOrderDto;
 import com.qb.orderservice.dto.ResCreateOrderDto;
+import com.qb.orderservice.dto.ResDeleteOrderDto;
+import com.qb.orderservice.dto.ResGetOrderDto;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -107,6 +109,29 @@ public class OrderService {
 
 	}
 
+	@Transactional(readOnly = true)
+	public ResGetOrderDto getOrder(UUID orderId) {
+		return ResGetOrderDto.fromEntity(
+			orderRepository.findByOrderIdAndDeletedAtIsNull(orderId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 삭제된 주문입니다."))
+		);
+	}
+
+	@Transactional
+	public ResDeleteOrderDto deleteOrder(UUID orderId) {
+		Order order = orderRepository.findByOrderIdAndDeletedAtIsNull(orderId)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 이미 삭제된 주문입니다."));
+
+		// 업체담당자일때 주문자 != 로그인유저 -> 실패
+			// 취소
+		//order.canceledOrder("");
+
+		order.softDelete("");
+
+		return ResDeleteOrderDto.fromEntity(order);
+
+	}
+
 	private void decreaseStockWithRetry(List<ReqUpdateItemStockDto> requestList) {
 		int attempt = 0;
 		while (attempt < MAX_RETRIES) {
@@ -127,7 +152,6 @@ public class OrderService {
 		log.error("ItemService.decreaseQuantity 호출 최종 실패.");
 		throw new RuntimeException("재고 감소 서비스에 연결할 수 없습니다.");
 	}
-
 	private ResCreateDeliveryDto createDeliveryWithRetry(UUID orderId, ReqCreateOrderDto requestDto, List<OrderItem> succeededItems) {
 		ReqCreateDeliveryDto reqCreateDeliveryDto = ReqCreateDeliveryDto.fromOrderCreation(
 			orderId,

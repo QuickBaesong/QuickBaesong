@@ -1,5 +1,10 @@
 package com.qb.orderservice.presentation.controller;
 
+import java.util.UUID;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +15,8 @@ import com.qb.common.response.ApiResponse;
 import com.qb.orderservice.application.service.OrderService;
 import com.qb.orderservice.dto.ReqCreateOrderDto;
 import com.qb.orderservice.dto.ResCreateOrderDto;
+import com.qb.orderservice.dto.ResDeleteOrderDto;
+import com.qb.orderservice.dto.ResGetOrderDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +32,17 @@ public class OrderController {
 	public ApiResponse<ResCreateOrderDto> createOrder(@RequestBody @Valid ReqCreateOrderDto requestDto){
 		ResCreateOrderDto newOrder = orderService.createOrder(requestDto);
 		return ApiResponse.of(SuccessCode.CREATED, newOrder);
+	}
+
+	@GetMapping("/{orderId}")
+	public ApiResponse<ResGetOrderDto> getOrder(@PathVariable("orderId") UUID orderId){
+		ResGetOrderDto resGetOrderDto = orderService.getOrder(orderId);
+		return ApiResponse.of(SuccessCode.OK, resGetOrderDto);
+	}
+
+	@DeleteMapping("/{orderId}")
+	public ApiResponse<ResDeleteOrderDto> deleteOrder(@PathVariable("orderId") UUID orderId){
+		ResDeleteOrderDto resDeleteOrderDto = orderService.deleteOrder(orderId);
+		return ApiResponse.of(SuccessCode.OK, resDeleteOrderDto);
 	}
 }

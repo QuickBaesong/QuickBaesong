@@ -85,7 +85,7 @@ public class Order extends BaseEntity {
 
 	public void canceledOrder(String userName){
 		this.orderStatus = orderStatus.CANCELED;
-		softDelete(userName);
+		this.softDelete(userName);
 	}
 
 	public void updateDeliveryInfo(UUID deliveryId){
