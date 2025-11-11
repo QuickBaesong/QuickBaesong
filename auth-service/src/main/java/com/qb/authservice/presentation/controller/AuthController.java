@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authservice;
+    private final AuthService authService;
 
     @PostMapping("/sign-up")
     public SignupResponse signup(@Valid @RequestBody SignupRequest request) {
-        return authservice.signup(request);
+        return authService.signup(request);
     }
 }
