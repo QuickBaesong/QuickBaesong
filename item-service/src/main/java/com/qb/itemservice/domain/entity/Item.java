@@ -50,18 +50,24 @@ public class Item extends BaseEntity {
 		this.quantity = quantity;
 	}
 
-	public void decreaseStock(Long newQuantity){
-		if(this.quantity < newQuantity){
-			throw new IllegalArgumentException("보유 재고가 차감할 수량보다 커야 합니다.");
-		}
-		if (this.quantity <= 0) {
-			throw new IllegalArgumentException("재고가 부족합니다.");
-		}
-		this.quantity -= newQuantity;
+	public Item(UUID itemId, Long quantity) {
+		this.itemId = itemId;
+		this.quantity = quantity;
 	}
 
-	public void increaseStock(Long newQuantity){
-		this.quantity += newQuantity;
+	public void decreaseStock(Long amount){
+		if (amount <= 0){
+			throw new IllegalArgumentException("주문 수량은 0보다 작을 수 없습니다.");
+		}
+		if(this.quantity < amount){
+			throw new IllegalArgumentException("보유 재고가 차감할 수량보다 커야 합니다.");
+		}
+
+		this.quantity -= amount;
+	}
+
+	public void increaseStock(Long amount){
+		this.quantity += amount;
 	}
 
 	public void updatePrice(Long newPrice){

@@ -13,4 +13,6 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
 	Optional<Item> findByItemIdAndDeletedAtIsNull(UUID itemId);
 	List<Item> findAllByHubIdAndDeletedAtIsNull(UUID hubId);
 	List<Item> findAllByCompanyIdAndDeletedAtIsNull(UUID companyId);
+
+	List<Item> findAllByItemIdInAndDeletedAtIsNull(List<UUID> itemsIds);
 }
