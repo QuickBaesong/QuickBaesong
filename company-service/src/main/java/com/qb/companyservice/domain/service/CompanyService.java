@@ -55,39 +55,4 @@ public class CompanyService {
       throw new RuntimeException("업체 생성 중 오류가 발생했습니다", e);
     }
   }
-
-  /**
-   * 업체 단건 조회
-   * @param companyId 업체 ID
-   * @return 업체 정보
-   */
-  public CompanyResponse getCompany(UUID companyId) {
-    log.info("업체 조회 요청: ID={}", companyId);
-
-    try {
-      Company company = companyDomainService.findById(companyId);
-      CompanyResponse response = CompanyResponse.from(company);
-
-      log.info("업체 조회 완료: ID={}, 이름={}", company.getCompanyId(), company.getCompanyName());
-
-      return response;
-
-    } catch (IllegalArgumentException e) {
-      log.error("업체 조회 실패 - 업체를 찾을 수 없음: {}", e.getMessage());
-      throw e;
-    } catch (Exception e) {
-      log.error("업체 조회 실패 - 시스템 오류", e);
-      throw new RuntimeException("업체 조회 중 오류가 발생했습니다", e);
-    }
-  }
-
-  /**
-   * 허브별 업체 수 조회 (향후 사용 가능)
-   * @param hubId 허브 ID
-   * @return 업체 수
-   */
-  public long getCompanyCountByHub(UUID hubId) {
-    log.info("허브별 업체 수 조회: 허브ID={}", hubId);
-    return companyDomainService.countByHubId(hubId);
-  }
 }
