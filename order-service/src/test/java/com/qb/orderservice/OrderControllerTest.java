@@ -86,6 +86,7 @@ public class OrderControllerTest {
 
 		ReqCreateOrderDto reqCreateOrderDto = new ReqCreateOrderDto(
 			hubId,
+			UUID.randomUUID(),//도착허브
 			sender,
 			receiver,
 			userId,
