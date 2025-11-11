@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,7 +35,14 @@ public class HubController {
         return ResponseEntity.ok(ApiResponse.of(SuccessCode.OK, response));
     }
 
-    //@PostMapping("/dummy")
+    @PostMapping("/dummy")
+    public ResponseEntity<ApiResponse<List<GetHubResponse>>> createDummyHubs() {
+
+        List<GetHubResponse> responses = hubService.createAllDummyHubs();
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(SuccessCode.CREATED, responses));
+    }
 
 
 
