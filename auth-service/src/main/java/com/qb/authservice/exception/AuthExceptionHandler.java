@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackages = "com.qb.auth") // auth 서비스 Controller만 처리
+@RestControllerAdvice(basePackages = "com.qb.authservice")
 public class AuthExceptionHandler {
 
     @ExceptionHandler(AuthCustomException.class)
