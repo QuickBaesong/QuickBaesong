@@ -21,7 +21,7 @@ public class DeliveryResponse {
     private String deliveryAddress;
     private String recipientName;
     private String recipientSlackId;
-    private String companyManagerId;
+    // private UUID companyManagerId;
     private LocalDateTime createdAt;
 
     public static DeliveryResponse from(Delivery delivery) {
@@ -34,7 +34,7 @@ public class DeliveryResponse {
                 .deliveryAddress(delivery.getDeliveryAddress())
                 .recipientName(delivery.getRecipientName())
                 .recipientSlackId(delivery.getRecipientSlackId())
-                .companyManagerId(delivery.getCompanyManagerId())
+//                .companyManagerId(delivery.getCompanyManagerId())
                 .createdAt(delivery.getCreatedAt())
                 .build();
     }
