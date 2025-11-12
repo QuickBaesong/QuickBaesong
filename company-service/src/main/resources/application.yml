@@ -1,11 +1,15 @@
-server:
-  port: 8082
-
 spring:
-  application:
-    name: company-service
+  profiles:
+    active: local
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+
+server:
+  port: 8082
+
+logging:
+  level:
+    com.qb.companyservice: DEBUG

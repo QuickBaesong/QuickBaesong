@@ -5,6 +5,8 @@ import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.qb.common.entity.BaseEntity;
+import com.qb.itemservice.exception.ItemCustomException;
+import com.qb.itemservice.exception.ItemErrorCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,12 +57,18 @@ public class Item extends BaseEntity {
 		this.quantity = quantity;
 	}
 
+	public Item(UUID itemId, Long price, String itemName) {
+		this.itemId = itemId;
+		this.price = price;
+		this.itemName = itemName;
+	}
+
 	public void decreaseStock(Long amount){
 		if (amount <= 0){
-			throw new IllegalArgumentException("주문 수량은 0보다 작을 수 없습니다.");
+			throw new ItemCustomException(ItemErrorCode.INVALID_INPUT);
 		}
 		if(this.quantity < amount){
-			throw new IllegalArgumentException("보유 재고가 차감할 수량보다 커야 합니다.");
+			throw new ItemCustomException(ItemErrorCode.OUT_OF_STOCK);
 		}
 
 		this.quantity -= amount;
@@ -70,8 +78,16 @@ public class Item extends BaseEntity {
 		this.quantity += amount;
 	}
 
-	public void updatePrice(Long newPrice){
+	public void updateInfo(Long newPrice, String newItemName){
+		boolean isPriceUnchanged = this.price.equals(newPrice);
+		boolean isItemNameUnchanged = this.itemName.equals(newItemName);
+
+		if(isPriceUnchanged && isItemNameUnchanged){
+			throw new ItemCustomException(ItemErrorCode.INVALID_INPUT);
+		}
+
 		this.price = newPrice;
+		this.itemName = newItemName;
 	}
 
 }

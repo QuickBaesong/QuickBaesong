@@ -19,10 +19,16 @@ import com.qb.itemservice.domain.repository.ItemRepository;
 import com.qb.itemservice.domain.service.CompanyHubPolicy;
 import com.qb.itemservice.dto.ReqCreateItemDto;
 import com.qb.itemservice.dto.ReqPatchItemDto;
+import com.qb.itemservice.dto.ReqUpdateItemInfoDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
+import com.qb.itemservice.dto.ResDeleteItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
 import com.qb.itemservice.dto.ResPatchItemDto;
+import com.qb.itemservice.dto.ResUpdateItemInfoDto;
+import com.qb.itemservice.exception.ItemCustomException;
+import com.qb.itemservice.exception.ItemErrorCode;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -64,7 +70,7 @@ public class ItemService {
 		// user role
 
 		Item item = itemRepository.findByItemIdAndDeletedAtIsNull(itemId).orElseThrow(()->{
-			throw new IllegalArgumentException("존재하지 않는 상품입니다");
+			throw new ItemCustomException(ItemErrorCode.NOT_FOUND_ITEM);
 		});
 
 		return ResGetItemDto.fromEntity(item);
@@ -80,7 +86,7 @@ public class ItemService {
 		List<Item> items = itemRepository.findAllByItemIdInAndDeletedAtIsNull(itemsIds);
 
 		if (items.size() != itemsIds.size()) {
-			throw new IllegalArgumentException("존재하지 않거나 삭제된 아이템입니다.");
+			throw new ItemCustomException(ItemErrorCode.NOT_FOUND_ITEM);
 		}
 
 		Map<UUID, Item> itemMap = items.stream()
@@ -106,7 +112,7 @@ public class ItemService {
 		List<Item> items = itemRepository.findAllByItemIdInAndDeletedAtIsNull(itemsIds);
 
 		if (items.size() != itemsIds.size()) {
-			throw new IllegalArgumentException("존재하지 않거나 삭제된 아이템입니다.");
+			throw new ItemCustomException(ItemErrorCode.NOT_FOUND_ITEM);
 		}
 
 		Map<UUID, Item> itemMap = items.stream()
@@ -122,5 +128,26 @@ public class ItemService {
 			.toList();
 	}
 
+	@Transactional
+	public ResDeleteItemDto deleteItem(UUID itemId) {
 
+		Item item = itemRepository.findByItemIdAndDeletedAtIsNull(itemId).orElseThrow(()-> new ItemCustomException(ItemErrorCode.NOT_FOUND_ITEM));
+
+		// user 소속 업체/허브와 아이템 허브/아이디 비교
+
+		item.softDelete("");
+
+		return ResDeleteItemDto.fromEntity(item);
+
+	}
+
+	@Transactional
+	public ResUpdateItemInfoDto updateItemInfo(UUID itemId, ReqUpdateItemInfoDto requestDto) {
+		Item item = itemRepository.findByItemIdAndDeletedAtIsNull(itemId)
+			.orElseThrow(()-> new ItemCustomException(ItemErrorCode.NOT_FOUND_ITEM));
+
+		item.updateInfo(requestDto.getPrice(), requestDto.getItemName());
+
+		return ResUpdateItemInfoDto.toDto(item);
+	}
 }
