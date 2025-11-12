@@ -23,29 +23,36 @@ public class HubRouteService {
     private final HubRouteRepository hubRouteRepository;
     private final HubRepository hubRepository;
 
+    @Transactional
     public GetHubRouteResponse createHubRoute(CreateHubRouteRequest request) {
-        // 허브 조회
-        Hub hub = hubRepository.findById(request.getHubId()).orElse(null);
-        Hub startHub = hubRepository.findById(request.getStartHubId()).orElse(null);
-        Hub destinationHub = hubRepository.findById(request.getDestinationHubId()).orElse(null);
+        // 1. 필수 허브 조회 및 존재 여부 검사 (NullPointerException 방지)
+        Hub hub = hubRepository.findById(request.getHubId())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT_VALUE, "hubId: 기존 허브 ID를 찾을 수 없습니다."));
 
-        // 중복 검사
+        Hub startHub = hubRepository.findById(request.getStartHubId())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT_VALUE, "startHubId: 시작 허브 ID를 찾을 수 없습니다."));
+
+        Hub destinationHub = hubRepository.findById(request.getDestinationHubId())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT_VALUE, "destinationHubId: 도착 허브 ID를 찾을 수 없습니다."));
+
+        // 2. 중복 검사 및 예외 처리
         if (hubRouteRepository.existsByHub_HubIdAndStartHub_HubIdAndDestinationHub_HubId(
                 request.getHubId(), request.getStartHubId(), request.getDestinationHubId())) {
-            throw new IllegalArgumentException("동일한 경로의 허브 루트가 이미 존재합니다.");
+            // 중복 리소스에 대한 구체적인 에러 코드 사용 권장 (예시: DUPLICATE_RESOURCE)
+            throw new CustomException(ErrorCode.DUPLICATE_RESOURCE, "동일한 경로의 허브 루트가 이미 존재합니다.");
         }
 
-        // 엔티티 생성
+        // 3. 엔티티 생성
         HubRoute hubRoute = HubRoute.of(hub, startHub, destinationHub,
                 request.getDuration(),
                 request.getDistance());
 
-        // 저장
+        // 4. 저장 및 로그
         HubRoute savedRoute = hubRouteRepository.save(hubRoute);
         log.info("HubRoute created - ID: {}, Hub: {}, Start: {}, Destination: {}",
                 savedRoute.getHubRouteId(), hub.getHubId(), startHub.getHubId(), destinationHub.getHubId());
 
-        return GetHubRouteResponse.fromEntity(savedRoute);
+        return GetHubRouteResponse.from(savedRoute);
     }
 
 }
