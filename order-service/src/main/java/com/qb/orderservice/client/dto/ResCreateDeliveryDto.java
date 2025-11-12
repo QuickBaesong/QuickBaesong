@@ -11,11 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResCreateDeliveryDto {
-	private UUID orderId;
 	private UUID deliveryId;
-	private String deliveryAddress;
-	private String recipientSlackId;
-	private String recipientName;
-	private LocalDateTime requiredDeliveryAt;
+	private UUID orderId;
 	private String currentStatus;
+	private UUID departureHubId;
+	private UUID destinationHubId;
+	private String deliveryAddress;
+	private String recipientName;
+	private String recipientSlackId;
+	private String companyManagerId;
+	private LocalDateTime createdAt;
 }
