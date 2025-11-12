@@ -4,11 +4,11 @@ package com.qb.common.security;
 public class UserContextHolder {
     private static final ThreadLocal<UserContext> userContext = new ThreadLocal<>();
 
-    public static UserContext getUser() {
+    public static UserContext get() {
         return userContext.get();
     }
 
-    public static void setUser(UserContext context) {
+    public static void set(UserContext context) {
         userContext.set(context);
     }
 
