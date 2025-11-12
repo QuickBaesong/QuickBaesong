@@ -7,5 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponse {
     private String userId;
-    private String username;  // 사용자명만 필요
+    private String username;
+    private String slackId;
 }
