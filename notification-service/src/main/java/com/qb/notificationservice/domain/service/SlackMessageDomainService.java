@@ -249,7 +249,7 @@ public class SlackMessageDomainService {
     SlackMessage message = getByIdAndNotDeleted(messageId);
 
     // 논리적 삭제 처리 (BaseEntity의 delete 메서드 활용)
-    message.delete(deletedBy.toString());
+    message.softDelete(deletedBy.toString());
 
     slackMessageRepository.save(message);
 
