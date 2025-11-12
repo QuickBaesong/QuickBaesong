@@ -47,7 +47,7 @@ public class HubController {
                 .body(ApiResponse.of(SuccessCode.CREATED, responses));
     }
 
-    //@GetMapping
+
 
 
 
