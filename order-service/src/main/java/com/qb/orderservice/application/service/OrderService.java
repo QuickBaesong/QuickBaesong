@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.qb.common.enums.ErrorCode;
-import com.qb.common.enums.SuccessCode;
 import com.qb.common.response.ApiResponse;
 import com.qb.orderservice.client.DeliveryServiceClient;
 import com.qb.orderservice.client.ItemServiceClient;
@@ -93,7 +91,7 @@ public class OrderService {
 			this.decreaseStockWithRetry(decreaseList);
 
 			// TO DO : 로그인 userName 가져오기
-			ResCreateDeliveryDto delivery = this.createDeliveryWithRetry(order.getOrderId(), requestDto, "tester");
+			ResCreateDeliveryDto delivery = this.createDeliveryWithRetry(order, requestDto, "tester");
 			order.updateDeliveryInfo(delivery.getDeliveryId());
 
 			ResCreateOrderDto resCreateOrderDto = ResCreateOrderDto.fromEntity(order, delivery);
@@ -160,6 +158,7 @@ public class OrderService {
 		return ResPatchOrderItemDto.fromEntity(order, orderItem);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<ResGetOrderDto> searchOrders(Pageable pageable) {
 		//UserRole role = userContext.currentUserRole();
 		//UUID currentUserId = userContext.currentUserId();
@@ -192,9 +191,9 @@ public class OrderService {
 		throw new OrderCustomException(OrderErrorCode.ITEM_SERVICE_UNAVAILABLE);
 	}
 
-	private ResCreateDeliveryDto createDeliveryWithRetry(UUID orderId, ReqCreateOrderDto requestDto, String companyManagerId) {
+	private ResCreateDeliveryDto createDeliveryWithRetry(Order order, ReqCreateOrderDto requestDto, String companyManagerId) {
 		ReqCreateDeliveryDto reqCreateDeliveryDto = ReqCreateDeliveryDto.fromOrderCreation(
-			orderId,
+			order.getOrderId(),
 			requestDto
 		);
 
@@ -203,12 +202,14 @@ public class OrderService {
 			try {
 				ApiResponse<ResCreateDeliveryDto> response = deliveryServiceClient.createDelivery(reqCreateDeliveryDto);
 				if (response.getData() == null) {
+					order.softDelete("DELIVERY_CREATE_ERROR");
 					throw new OrderCustomException(OrderErrorCode.INVALID_DELIVERY_REQUEST);
 				}
 				return response.getData();
 			} catch (FeignException e) {
 				if (e.status() >= 400 && e.status() < 500) {
-					log.error("배송 요청 4xx 오류: Order ID: {}", orderId, e);
+					log.error("배송 요청 4xx 오류: Order ID: {}", order.getOrderId(), e);
+					order.softDelete("SYSTEM_ERROR");
 					throw new OrderCustomException(OrderErrorCode.INVALID_DELIVERY_REQUEST);
 				}
 				attempt++;
@@ -216,7 +217,8 @@ public class OrderService {
 				this.sleep(RETRY_DELAY_MS);
 			}
 		}
-		log.error("DeliveryService.createDelivery 호출 최종 실패. Order ID: {}", orderId);
+		log.error("DeliveryService.createDelivery 호출 최종 실패. Order ID: {}", order.getOrderId());
+		order.softDelete("SYSTEM_ERROR");
 		throw new OrderCustomException(OrderErrorCode.DELIVERY_SERVICE_UNAVAILABLE);
 	}
 
