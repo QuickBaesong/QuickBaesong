@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReqCreateDeliveryDto {
 	private UUID orderId;
-	private String companyManagerId;
 	private UUID departureHubId;
 	private UUID destinationHubId;
 	private String deliveryAddress;
@@ -30,13 +29,11 @@ public class ReqCreateDeliveryDto {
 
 	public static ReqCreateDeliveryDto fromOrderCreation(
 		UUID orderId,
-		ReqCreateOrderDto requestDto,
-		String companyManagerId
+		ReqCreateOrderDto requestDto
 	) {
 
 		return new ReqCreateDeliveryDto(
 			orderId,
-			companyManagerId,
 			requestDto.getHubId(),
 			requestDto.getDestinationHubId(),
 			requestDto.getDeliveryAddress(),
