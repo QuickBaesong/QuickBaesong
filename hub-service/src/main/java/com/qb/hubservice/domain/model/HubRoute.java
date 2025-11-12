@@ -22,21 +22,21 @@ public class HubRoute extends BaseEntity {
     @JoinColumn(name = "hub_id", nullable = false)
     private Hub hub;
 
-    // 출발 허브 (p_hub_route.start_hub_id)
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "start_hub_id", nullable = false)
     private Hub startHub;
 
-    // 도착 허브 (p_hub_route.destination_hub_id)
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "destination_hub_id", nullable = false)
     private Hub destinationHub;
 
-    // 소요시간 (BIGINT)
+
     @Column(name = "duration", nullable = false)
     private Long duration;
 
-    // 이동거리 (DECIMAL)
+
     @Column(name = "distance", nullable = false, precision = 12, scale = 3)
     private BigDecimal distance;
 
