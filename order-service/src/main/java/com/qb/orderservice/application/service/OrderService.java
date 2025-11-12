@@ -195,8 +195,7 @@ public class OrderService {
 	private ResCreateDeliveryDto createDeliveryWithRetry(UUID orderId, ReqCreateOrderDto requestDto, String companyManagerId) {
 		ReqCreateDeliveryDto reqCreateDeliveryDto = ReqCreateDeliveryDto.fromOrderCreation(
 			orderId,
-			requestDto,
-			companyManagerId
+			requestDto
 		);
 
 		int attempt = 0;
