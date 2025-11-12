@@ -1,10 +1,13 @@
 package com.qb.itemservice.presentation.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,6 +30,7 @@ import com.qb.itemservice.dto.ResCreateItemDto;
 import com.qb.itemservice.dto.ResDeleteItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
 import com.qb.itemservice.dto.ResPatchItemDto;
+import com.qb.itemservice.dto.ResSearchItem;
 import com.qb.itemservice.dto.ResUpdateItemInfoDto;
 
 import jakarta.validation.Valid;
@@ -38,6 +42,8 @@ import lombok.RequiredArgsConstructor;
 public class ItemController {
 
 	private final ItemService itemService;
+	private static final List<Integer> ALLOWED_SIZES = Arrays.asList(10, 30, 50);
+	private static final int DEFAULT_SIZE = 10;
 
 	@PostMapping
 	public ApiResponse<ResCreateItemDto> createItem(@RequestBody @Valid ReqCreateItemDto requestDto){
@@ -67,5 +73,33 @@ public class ItemController {
 	@PatchMapping("/{itemId}")
 	public ApiResponse<ResUpdateItemInfoDto> updateItemInfo(@PathVariable("itemId") UUID itemId, @RequestBody @Valid ReqUpdateItemInfoDto requestDto){
 		return ApiResponse.of(SuccessCode.OK, itemService.updateItemInfo(itemId, requestDto));
+	}
+
+	@GetMapping
+	public ApiResponse<PageResponse<ResSearchItem>> searchItems(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "", required = false) String keyword
+		){
+
+		int requestSize = size;
+		int finalSize = ALLOWED_SIZES.contains(requestSize) ? requestSize : DEFAULT_SIZE;
+		int zeroBasedPage = Math.max(0, page - 1);
+
+		Sort sort = Sort.by(
+			Sort.Order.desc("createdAt"), // 첫 번째 정렬: createdAt DESC
+			Sort.Order.asc("itemName")    // 두 번째 정렬: itemName ASC
+		);
+
+		Pageable finalPageable = PageRequest.of(
+			zeroBasedPage,
+			finalSize,
+			sort
+		);
+
+		Page<ResSearchItem> resultPageList = itemService.searchItems(finalPageable, keyword);
+		PageResponse<ResSearchItem> responseDto = PageResponse.from(resultPageList);
+
+		return ApiResponse.of(SuccessCode.OK, responseDto);
+
 	}
 }
