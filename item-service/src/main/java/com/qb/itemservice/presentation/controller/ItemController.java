@@ -3,10 +3,14 @@ package com.qb.itemservice.presentation.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,12 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.qb.common.enums.SuccessCode;
 import com.qb.common.response.ApiResponse;
+import com.qb.common.response.PageResponse;
 import com.qb.itemservice.application.service.ItemService;
 import com.qb.itemservice.dto.ReqCreateItemDto;
 import com.qb.itemservice.dto.ReqPatchItemDto;
+import com.qb.itemservice.dto.ReqUpdateItemInfoDto;
 import com.qb.itemservice.dto.ResCreateItemDto;
+import com.qb.itemservice.dto.ResDeleteItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
 import com.qb.itemservice.dto.ResPatchItemDto;
+import com.qb.itemservice.dto.ResUpdateItemInfoDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,15 +49,23 @@ public class ItemController {
 		return ApiResponse.of(SuccessCode.OK, itemService.getItem(itemId));
 	}
 
-	@PatchMapping("/decrease")
+	@PutMapping("/decrease")
 	public ApiResponse<List<ResPatchItemDto>> decreaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
 		return ApiResponse.of(SuccessCode.OK, itemService.decreaseQuantity(itemList));
 	}
 
-	@PatchMapping("/increase")
+	@PutMapping("/increase")
 	public ApiResponse<List<ResPatchItemDto>> increaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
 		return ApiResponse.of(SuccessCode.OK, itemService.increaseQuantity(itemList));
 	}
 
+	@DeleteMapping("/{itemId}")
+	public ApiResponse<ResDeleteItemDto> deleteItem(@PathVariable("itemId") UUID itemId){
+		return ApiResponse.of(SuccessCode.OK, itemService.deleteItem(itemId));
+	}
 
+	@PatchMapping("/{itemId}")
+	public ApiResponse<ResUpdateItemInfoDto> updateItemInfo(@PathVariable("itemId") UUID itemId, @RequestBody @Valid ReqUpdateItemInfoDto requestDto){
+		return ApiResponse.of(SuccessCode.OK, itemService.updateItemInfo(itemId, requestDto));
+	}
 }

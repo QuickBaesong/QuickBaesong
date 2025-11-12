@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableDiscoveryClient
 @EnableFeignClients
 @EnableJpaAuditing
-@ComponentScan(basePackages = {"com.qb.common"})
+@ComponentScan(basePackages = {"com.qb.common", "com.qb.itemservice"})
 public class ItemServiceApplication {
 
   public static void main(String[] args) {
