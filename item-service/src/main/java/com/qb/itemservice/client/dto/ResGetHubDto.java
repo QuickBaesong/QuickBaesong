@@ -1,5 +1,6 @@
 package com.qb.itemservice.client.dto;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResGetHubDto {
-	@JsonProperty("hub_id")
+
 	private UUID hubId;
-	@JsonProperty("hub_name")
 	private String hubName;
+
 }
