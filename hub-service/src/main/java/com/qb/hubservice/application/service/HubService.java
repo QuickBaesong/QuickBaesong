@@ -4,11 +4,15 @@ import com.qb.hubservice.domain.model.Hub;
 import com.qb.hubservice.domain.repository.HubRepository;
 import com.qb.hubservice.domain.vo.Location;
 import com.qb.hubservice.presentation.request.CreateHubRequest;
+import com.qb.hubservice.presentation.request.HubSearchRequest;
 import com.qb.hubservice.presentation.response.GetHubResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -124,7 +128,29 @@ public class HubService {
                 .collect(Collectors.toList());
     }
 
+    public Page<GetHubResponse> getPageHubs(Pageable pageable, HubSearchRequest searchRequest) {
 
+        Page<Hub> hubPage;
+
+        boolean isNamePresent = StringUtils.hasText(searchRequest.getHubName());
+        boolean isAddressPresent = StringUtils.hasText(searchRequest.getHubAddress());
+
+        boolean isSearchConditionPresent = isNamePresent || isAddressPresent;
+
+        if (isSearchConditionPresent) {
+
+            hubPage = hubRepository.findByComplexConditions(
+                    searchRequest.getHubName(),
+                    searchRequest.getHubAddress(),
+                    pageable
+            );
+        } else {
+
+            hubPage = hubRepository.findByDeletedAtIsNull(pageable);
+        }
+
+        return hubPage.map(GetHubResponse::from);
+    }
 
 
 }
