@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort.Direction;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import java.util.UUID;
 public class HubController {
 
     private final HubService hubService;
+    private static final List<Integer> ALLOWED_PAGE_SIZES = Arrays.asList(10, 30, 50);
 
     @PostMapping
     public ResponseEntity<ApiResponse<GetHubResponse>> createHub(@RequestBody @Valid CreateHubRequest request) {
@@ -43,6 +46,8 @@ public class HubController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(SuccessCode.CREATED, responses));
     }
+
+    //@GetMapping
 
 
 
