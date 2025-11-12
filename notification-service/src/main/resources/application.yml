@@ -1,11 +1,22 @@
-server:
-  port: 8087
-
 spring:
-  application:
-    name: notification-service
+  profiles:
+    active: local
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+
+server:
+  port: 8087
+
+# 슬랙 설정
+slack:
+  enabled: true
+  mock: true
+  default-channel: "#알림"
+
+logging:
+  level:
+    com.qb.notificationservice: DEBUG
+    org.springframework.web: DEBUG
