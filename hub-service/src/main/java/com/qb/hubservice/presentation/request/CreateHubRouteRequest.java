@@ -18,7 +18,6 @@ public class CreateHubRouteRequest {
     @NotNull(message = "기준 허브 ID는 필수입니다.")
     private UUID hubId;
 
-
     // 출발 허브 ID (필수)
     @NotNull(message = "출발 허브 ID는 필수입니다.")
     private UUID startHubId;
