@@ -12,4 +12,7 @@ import java.util.UUID;
 public interface DeliveryRepository extends JpaRepository<Delivery, UUID>, JpaSpecificationExecutor<Delivery> {
     @Query("SELECT d FROM Delivery d WHERE d.id = :id AND d.deletedAt IS NULL")
     Optional<Delivery> findByIdAndNotDeleted(@Param("id") UUID id);
+
+    @Query("SELECT d FROM Delivery d WHERE d.orderId = :orderId AND d.deletedAt IS NULL")
+    Optional<Delivery> findByOrderIdAndNotDeleted(@Param("orderId") UUID orderId);
 }
