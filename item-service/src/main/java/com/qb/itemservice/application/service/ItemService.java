@@ -6,8 +6,11 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.qb.common.response.ApiResponse;
 import com.qb.itemservice.client.CompanyServiceClient;
@@ -24,6 +27,7 @@ import com.qb.itemservice.dto.ResCreateItemDto;
 import com.qb.itemservice.dto.ResDeleteItemDto;
 import com.qb.itemservice.dto.ResGetItemDto;
 import com.qb.itemservice.dto.ResPatchItemDto;
+import com.qb.itemservice.dto.ResSearchItem;
 import com.qb.itemservice.dto.ResUpdateItemInfoDto;
 import com.qb.itemservice.exception.ItemCustomException;
 import com.qb.itemservice.exception.ItemErrorCode;
@@ -149,5 +153,19 @@ public class ItemService {
 		item.updateInfo(requestDto.getPrice(), requestDto.getItemName());
 
 		return ResUpdateItemInfoDto.toDto(item);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<ResSearchItem> searchItems(Pageable pageable, String keyword) {
+
+		Page<Item> itemPages;
+
+		if (!StringUtils.hasText(keyword)) {
+			itemPages = itemRepository.findAllAndDeletedAtIsNull(pageable);
+		}else{
+			itemPages = itemRepository.findByItemNameContains(pageable, keyword);
+		}
+
+		return itemPages.map(ResSearchItem::fromEntity);
 	}
 }
