@@ -19,9 +19,9 @@ public interface ItemRepository extends JpaRepository<Item, UUID> {
 
 	List<Item> findAllByItemIdInAndDeletedAtIsNull(List<UUID> itemsIds);
 
-	@Query("SELECT i FROM Item i WHERE i.deletedAt IS NULL ORDER BY i.createdAt DESC")
+	@Query("SELECT i FROM Item i WHERE i.deletedAt IS NULL")
 	Page<Item> findAllAndDeletedAtIsNull(Pageable pageable);
 
-	@Query("SELECT i FROM Item i WHERE i.deletedAt IS NULL AND LOWER(i.itemName) LIKE LOWER(CONCAT('%', :keyword, '%')) ORDER BY i.createdAt DESC")
+	@Query("SELECT i FROM Item i WHERE i.deletedAt IS NULL AND LOWER(i.itemName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
 	Page<Item> findByItemNameContains(Pageable pageable, String keyword);
 }
