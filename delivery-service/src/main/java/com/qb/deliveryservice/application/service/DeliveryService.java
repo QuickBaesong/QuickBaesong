@@ -1,7 +1,9 @@
 package com.qb.deliveryservice.application.service;
 
 import com.qb.deliveryservice.application.dto.*;
-import com.qb.deliveryservice.domain.model.Delivery;
+import com.qb.deliveryservice.domain.model.*;
+import com.qb.deliveryservice.domain.repository.DeliveryManagerRepository;
+import com.qb.deliveryservice.domain.repository.DeliveryManagerSequenceRepository;
 import com.qb.deliveryservice.domain.repository.DeliveryRepository;
 import com.qb.deliveryservice.domain.specification.DeliverySpecification;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +24,86 @@ import java.util.UUID;
 public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryManagerRepository managerRepository;
+    private final DeliveryManagerSequenceRepository sequenceRepository;
 
     // 배송 생성
     @Transactional
     public DeliveryResponse create(DeliveryCreateRequest req) {
+        // 1. 배송 엔티티 생성
         Delivery delivery = req.toEntity();
-        Delivery saved = deliveryRepository.save(delivery);
-        return DeliveryResponse.from(saved);
+        Delivery savedDelivery = deliveryRepository.save(delivery);
+
+        log.info("배송 생성 - deliveryId: {}, orderId: {}", savedDelivery.getId(), req.getOrderId());
+
+        // ✨ 2. 목적지 허브 업체 담당자 자동 배정 (순환)
+        DeliveryManagerSequence destinationSeq = sequenceRepository
+                .findBySequenceTypeAndHubId("COMPANY", req.getDestinationHubId())
+                .orElseGet(() -> {
+                    DeliveryManagerSequence newSeq = DeliveryManagerSequence.builder()
+                            .sequenceType("COMPANY")
+                            .hubId(req.getDestinationHubId())
+                            .lastSequence(-1)
+                            .build();
+                    return sequenceRepository.save(newSeq);
+                });
+
+        DeliveryManager destinationCompanyManager = getNextCompanyManager(
+                req.getDestinationHubId(),
+                destinationSeq.getLastSequence()
+        );
+        destinationSeq.updateSequence(destinationCompanyManager.getSequence());
+        savedDelivery.assignCompanyManager(destinationCompanyManager.getId());
+
+        log.info("목적지 허브 업체 담당자 배정 - hubId: {}, managerId: {}, sequence: {}",
+                req.getDestinationHubId(),
+                destinationCompanyManager.getId(),
+                destinationCompanyManager.getSequence());
+
+        // ✨ 3. 허브 담당자 자동 배정 (순환)
+        DeliveryManagerSequence hubSeq = sequenceRepository
+                .findBySequenceTypeAndHubIdIsNull("HUB")
+                .orElseGet(() -> {
+                    DeliveryManagerSequence newSeq = DeliveryManagerSequence.builder()
+                            .sequenceType("HUB")
+                            .hubId(null)
+                            .lastSequence(-1)
+                            .build();
+                    return sequenceRepository.save(newSeq);
+                });
+
+        DeliveryManager hubManager = getNextHubManager(hubSeq.getLastSequence());
+        hubSeq.updateSequence(hubManager.getSequence());
+        savedDelivery.updateLastAssignedHubSequence(hubManager.getSequence());
+
+        log.info("허브 담당자 배정 - managerId: {}, sequence: {}",
+                hubManager.getId(),
+                hubManager.getSequence());
+
+        // 4. 배송 상태 변경
+        savedDelivery.updateStatus(DeliveryStatus.HUB_MOVING);
+
+        log.info("배송 생성 완료 - deliveryId: {}, orderId: {}",
+                savedDelivery.getId(), req.getOrderId());
+
+        // ✨ 5. 담당자 2명만 반환
+        return DeliveryResponse.from(
+                savedDelivery,
+                hubManager,
+                destinationCompanyManager
+        );
+    }
+
+    private DeliveryManager getNextHubManager(Integer lastSequence) {
+        return managerRepository.findNextHubManager(lastSequence)
+                .orElseGet(() -> managerRepository.findFirstHubManager()
+                        .orElseThrow(() -> new IllegalStateException("허브 배송 담당자가 등록되어 있지 않습니다.")));
+    }
+
+    private DeliveryManager getNextCompanyManager(UUID hubId, Integer lastSequence) {
+        return managerRepository.findNextCompanyManager(hubId, lastSequence)
+                .orElseGet(() -> managerRepository.findFirstCompanyManager(hubId)
+                        .orElseThrow(() -> new IllegalStateException("업체 배송 담당자가 등록되어 있지 않습니다.")));
     }
 
     // 배송 조회
