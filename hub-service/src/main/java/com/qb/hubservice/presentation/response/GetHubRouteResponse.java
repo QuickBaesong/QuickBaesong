@@ -13,6 +13,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetHubRouteResponse {
 
+    private UUID hubId;
+
     private final UUID hubRouteId;
 
     private final UUID startHubId;
@@ -22,16 +24,16 @@ public class GetHubRouteResponse {
     private final BigDecimal distance;
 
     private final Long duration;
-
-    public static GetHubRouteResponse from(HubRoute hubRoute) {
+    public static GetHubRouteResponse fromEntity(HubRoute hubRoute) {
         return GetHubRouteResponse.builder()
                 .hubRouteId(hubRoute.getHubRouteId())
+                .hubId(hubRoute.getHub().getHubId())
                 .startHubId(hubRoute.getStartHub().getHubId())
                 .destinationHubId(hubRoute.getDestinationHub().getHubId())
-                .distance(hubRoute.getDistance())
                 .duration(hubRoute.getDuration())
+                .distance(hubRoute.getDistance())
                 .build();
-
     }
+
 
 }

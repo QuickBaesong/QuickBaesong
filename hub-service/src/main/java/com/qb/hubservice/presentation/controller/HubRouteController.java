@@ -2,9 +2,11 @@ package com.qb.hubservice.presentation.controller;
 
 import com.qb.common.enums.SuccessCode;
 import com.qb.common.response.ApiResponse;
+import com.qb.hubservice.application.service.HubRouteService;
 import com.qb.hubservice.presentation.request.CreateHubRouteRequest;
 import com.qb.hubservice.presentation.response.GetHubRouteResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/hub-routes")
 public class HubRouteController {
+
+    private final HubRouteService hubRouteService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<GetHubRouteResponse>> createHubRoute(

@@ -40,4 +40,16 @@ public class HubRoute extends BaseEntity {
     @Column(name = "distance", nullable = false, precision = 12, scale = 3)
     private BigDecimal distance;
 
+    public static HubRoute of(Hub hub, Hub startHub, Hub destinationHub,
+                              Long duration, BigDecimal distance) {
+        HubRoute hubRoute = new HubRoute();
+        hubRoute.hub = hub;
+        hubRoute.startHub = startHub;
+        hubRoute.destinationHub = destinationHub;
+        hubRoute.duration = duration;
+        hubRoute.distance = distance;
+        return hubRoute;
+    }
+
+
 }
