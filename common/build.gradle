@@ -6,6 +6,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
 
+    annotationProcessor 'io.github.openfeign.querydsl:querydsl-apt:5.6.1:jakarta'
+
+    // APT가 엔티티를 처리할 수 있도록 JPA 및 Annotation API 추가
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+
     // 루트 모듈의 subprojects에서 이미 설정된 항목들:
     // - lombok (compileOnly, annotationProcessor) 
     // - spring-boot-starter-test
@@ -19,4 +25,13 @@ jar {
 
 bootJar {
     enabled = false  // 실행 가능한 JAR 비활성화
+}
+
+sourceSets {
+    main {
+        java {
+            // 이 설정은 QBaseEntity.java가 생성된 후 컴파일러가 이를 소스 코드로 인식하게 만듭니다. (유지 필수)
+            srcDirs = ['src/main/java', 'build/generated/sources/annotationProcessor/java/main']
+        }
+    }
 }
