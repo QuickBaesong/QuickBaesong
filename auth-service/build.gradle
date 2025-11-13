@@ -16,6 +16,7 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
 	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'com.h2database:h2'
 
 	// 루트 모듈의 subprojects에서 이미 설정된 항목들:
 	// - lombok (compileOnly, annotationProcessor)
