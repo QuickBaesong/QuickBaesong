@@ -35,6 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+.env
 item-service/.env
 item-service/docker-compose.yml
 order-service/docker-compose.yml
