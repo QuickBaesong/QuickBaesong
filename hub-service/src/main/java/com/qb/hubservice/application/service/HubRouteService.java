@@ -10,12 +10,14 @@ import com.qb.hubservice.exception.HubCustomException;
 import com.qb.hubservice.exception.HubErrorCode;
 import com.qb.hubservice.presentation.request.CreateHubRouteRequest;
 import com.qb.hubservice.presentation.response.GetHubRouteResponse;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -55,6 +57,15 @@ public class HubRouteService {
                 savedRoute.getHubRouteId(), hub.getHubId(), startHub.getHubId(), destinationHub.getHubId());
 
         return GetHubRouteResponse.from(savedRoute);
+    }
+
+
+    public GetHubRouteResponse getHubRoute(UUID hubRouteId) {
+
+        HubRoute hubRoute = hubRouteRepository.findById(hubRouteId)
+                .orElseThrow(() -> new EntityNotFoundException("HubRoute not found with ID: " + hubRouteId));
+
+        return GetHubRouteResponse.from(hubRoute);
     }
 
 }
