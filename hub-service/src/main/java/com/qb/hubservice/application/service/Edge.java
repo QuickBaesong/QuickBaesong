@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class Edge { // default 접근 제한자 (같은 패키지 내에서만 접근 가능)
+class Edge {
     final UUID destinationHubId;
     final BigDecimal distance;
     final Long duration;
