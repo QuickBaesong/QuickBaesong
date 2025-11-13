@@ -4,7 +4,9 @@ import com.qb.common.enums.SuccessCode;
 import com.qb.common.response.ApiResponse;
 import com.qb.hubservice.application.service.HubRouteService;
 import com.qb.hubservice.presentation.request.CreateHubRouteRequest;
+import com.qb.hubservice.presentation.request.ShortestRouteSearchRequest;
 import com.qb.hubservice.presentation.response.GetHubRouteResponse;
+import com.qb.hubservice.presentation.response.ShortestRouteResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,18 @@ public class HubRouteController {
             @PathVariable UUID hubRouteId
     ) {
         GetHubRouteResponse response = hubRouteService.getHubRoute(hubRouteId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(SuccessCode.OK, response));
+    }
+
+    @GetMapping("/shortest-path")
+    public ResponseEntity<ApiResponse<ShortestRouteResponse>> searchShortestRoute(
+            @Valid @ModelAttribute ShortestRouteSearchRequest request
+    ) {
+        // ShortestRouteService를 사용하여 최단 경로를 찾습니다.
+        ShortestRouteResponse response = shortestRouteService.findShortestRoute(request);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.of(SuccessCode.OK, response));
