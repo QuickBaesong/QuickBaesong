@@ -19,9 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.qb.common.annotations.CurrentUser;
+import com.qb.common.annotations.RequiredRole;
 import com.qb.common.enums.SuccessCode;
+import com.qb.common.enums.UserRole;
 import com.qb.common.response.ApiResponse;
 import com.qb.common.response.PageResponse;
+import com.qb.common.security.UserContext;
 import com.qb.itemservice.application.service.ItemService;
 import com.qb.itemservice.dto.ReqCreateItemDto;
 import com.qb.itemservice.dto.ReqPatchItemDto;
@@ -35,7 +39,9 @@ import com.qb.itemservice.dto.ResUpdateItemInfoDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/items")
 @RequiredArgsConstructor
@@ -46,39 +52,59 @@ public class ItemController {
 	private static final int DEFAULT_SIZE = 10;
 
 	@PostMapping
-	public ApiResponse<ResCreateItemDto> createItem(@RequestBody @Valid ReqCreateItemDto requestDto){
-		return ApiResponse.of(SuccessCode.CREATED, itemService.createItem(requestDto));
+	@RequiredRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.SUPPLIER_MANAGER})
+	public ApiResponse<ResCreateItemDto> createItem(@RequestBody @Valid ReqCreateItemDto requestDto
+		, @CurrentUser UserContext user){
+		return ApiResponse.of(SuccessCode.CREATED, itemService.createItem(requestDto, user));
 	}
 
 	@GetMapping("/{itemId}")
-	public ApiResponse<ResGetItemDto> getItem(@PathVariable UUID itemId){
-		return ApiResponse.of(SuccessCode.OK, itemService.getItem(itemId));
+	@RequiredRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.SUPPLIER_MANAGER, UserRole.DELIVERY_MANAGER})
+	public ApiResponse<ResGetItemDto> getItem(@PathVariable UUID itemId
+		, @CurrentUser UserContext user
+	){
+		return ApiResponse.of(SuccessCode.OK, itemService.getItem(itemId, user));
 	}
 
 	@PutMapping("/decrease")
-	public ApiResponse<List<ResPatchItemDto>> decreaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
-		return ApiResponse.of(SuccessCode.OK, itemService.decreaseQuantity(itemList));
+	@RequiredRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.SUPPLIER_MANAGER})
+	public ApiResponse<List<ResPatchItemDto>> decreaseQuantity(@RequestBody List<ReqPatchItemDto> itemList
+		, @CurrentUser UserContext user
+	){
+		return ApiResponse.of(SuccessCode.OK, itemService.decreaseQuantity(itemList, user));
 	}
 
 	@PutMapping("/increase")
-	public ApiResponse<List<ResPatchItemDto>> increaseQuantity(@RequestBody List<ReqPatchItemDto> itemList){
-		return ApiResponse.of(SuccessCode.OK, itemService.increaseQuantity(itemList));
+	@RequiredRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.SUPPLIER_MANAGER})
+	public ApiResponse<List<ResPatchItemDto>> increaseQuantity(@RequestBody List<ReqPatchItemDto> itemList
+		, @CurrentUser UserContext user
+	){
+		return ApiResponse.of(SuccessCode.OK, itemService.increaseQuantity(itemList, user));
 	}
 
 	@DeleteMapping("/{itemId}")
-	public ApiResponse<ResDeleteItemDto> deleteItem(@PathVariable("itemId") UUID itemId){
-		return ApiResponse.of(SuccessCode.OK, itemService.deleteItem(itemId));
+	@RequiredRole({UserRole.MASTER, UserRole.HUB_MANAGER})
+	public ApiResponse<ResDeleteItemDto> deleteItem(@PathVariable("itemId") UUID itemId
+		, @CurrentUser UserContext user
+	){
+		return ApiResponse.of(SuccessCode.OK, itemService.deleteItem(itemId, user));
 	}
 
 	@PatchMapping("/{itemId}")
-	public ApiResponse<ResUpdateItemInfoDto> updateItemInfo(@PathVariable("itemId") UUID itemId, @RequestBody @Valid ReqUpdateItemInfoDto requestDto){
-		return ApiResponse.of(SuccessCode.OK, itemService.updateItemInfo(itemId, requestDto));
+	@RequiredRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.SUPPLIER_MANAGER})
+	public ApiResponse<ResUpdateItemInfoDto> updateItemInfo(@PathVariable("itemId") UUID itemId
+		, @RequestBody @Valid ReqUpdateItemInfoDto requestDto
+		, @CurrentUser UserContext user
+	){
+		return ApiResponse.of(SuccessCode.OK, itemService.updateItemInfo(itemId, requestDto, user));
 	}
 
 	@GetMapping
-	public ApiResponse<PageResponse<ResSearchItem>> searchItems(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size,
-			@RequestParam(defaultValue = "", required = false) String keyword
+	@RequiredRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.SUPPLIER_MANAGER, UserRole.DELIVERY_MANAGER})
+	public ApiResponse<PageResponse<ResSearchItem>> searchItems(@RequestParam(defaultValue = "1") int page
+			,@RequestParam(defaultValue = "10") int size
+			,@RequestParam(defaultValue = "", required = false) String keyword
+			,@CurrentUser UserContext user
 		){
 
 		int requestSize = size;
@@ -96,7 +122,7 @@ public class ItemController {
 			sort
 		);
 
-		Page<ResSearchItem> resultPageList = itemService.searchItems(finalPageable, keyword);
+		Page<ResSearchItem> resultPageList = itemService.searchItems(finalPageable, keyword, user);
 		PageResponse<ResSearchItem> responseDto = PageResponse.from(resultPageList);
 
 		return ApiResponse.of(SuccessCode.OK, responseDto);
