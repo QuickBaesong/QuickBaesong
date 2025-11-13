@@ -16,7 +16,9 @@ public enum ErrorCode implements BaseErrorCode {
     INVALID_TOKEN("토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED),
     EXPIRED_TOKEN("토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
     INVALID_USER("사용자 정보가 올바르지 않습니다.", HttpStatus.UNAUTHORIZED),
-    USER_CONTEXT_NOT_SET("UserContext가 설정되지 않았습니다.", HttpStatus.NOT_FOUND);
+    USER_CONTEXT_NOT_SET("UserContext가 설정되지 않았습니다.", HttpStatus.NOT_FOUND),
+    FORBIDDEN_ACCESS("권한이 없습니다.", HttpStatus.FORBIDDEN);
+
 
 
     private final String message;
