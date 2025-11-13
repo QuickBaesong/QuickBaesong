@@ -12,12 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResGetCompanyDto {
-	@JsonProperty("company_id")
 	private UUID companyId;
-	@JsonProperty("company_name")
 	private String companyName;
-	@JsonProperty("hub_id")
 	private UUID hubId;
-	@JsonProperty("company_type")
 	private String companyType;
 }
