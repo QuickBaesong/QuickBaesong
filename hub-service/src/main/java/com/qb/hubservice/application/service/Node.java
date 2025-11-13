@@ -10,4 +10,5 @@ import java.util.UUID;
 class Node {
  final UUID id;
  final BigDecimal distance;
+ final Long duration;
 }
