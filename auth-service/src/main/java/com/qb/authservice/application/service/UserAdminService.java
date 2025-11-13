@@ -2,14 +2,11 @@ package com.qb.authservice.application.service;
 
 import com.qb.authservice.application.component.AuthComponent;
 import com.qb.authservice.domain.entity.User;
-import com.qb.authservice.domain.entity.UserRole;
 import com.qb.authservice.domain.repository.UserRepository;
 import com.qb.authservice.exception.AuthCustomException;
 import com.qb.authservice.exception.AuthErrorCode;
 import com.qb.authservice.presentation.dto.request.SignupRequest;
 import com.qb.authservice.presentation.dto.response.SignupResponse;
-import com.qb.common.enums.ErrorCode;
-import com.qb.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +19,8 @@ public class UserAdminService {
     private final UserRepository userRepository;
     private final AuthComponent authComponent;
 
-    //TODO: createBy에 master id 받아서 입력
     @Transactional
     public SignupResponse createUser(SignupRequest request) {
-//        validateMasterRole(role); // request의 role이 아니라 로그인한 유저의 role
         validateDuplicatedUser(request.username());
         String encodedPassword = authComponent.encodePassword(request.password());
 
@@ -39,12 +34,6 @@ public class UserAdminService {
     public void validateDuplicatedUser(String username) {
         if (userRepository.existsByUsername(username)) {
             throw new AuthCustomException(AuthErrorCode.DUPLICATE_ID);
-        }
-    }
-    // MASTER 권한 검증
-    public void validateMasterRole(UserRole role) {
-        if (role != UserRole.MASTER) {
-            throw new AuthCustomException(AuthErrorCode.INVALID_MASTER_ROLE);
         }
     }
 }
