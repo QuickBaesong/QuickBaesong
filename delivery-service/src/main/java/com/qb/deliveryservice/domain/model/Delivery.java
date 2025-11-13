@@ -42,6 +42,9 @@ public class Delivery extends BaseEntity {
     @Column(name = "company_manager_id", columnDefinition = "UUID")
     private UUID companyManagerId; // 업체 배송 담당자 ID (UUID) 나중에 배정
 
+    @Column(name = "last_assigned_hub_sequence")
+    private Integer lastAssignedHubSequence; // 마지막으로 배정받은 순서
+
     @Builder
     private Delivery(
             UUID orderId,
@@ -61,6 +64,7 @@ public class Delivery extends BaseEntity {
         this.recipientName = recipientName;
         this.recipientSlackId = recipientSlackId;
         this.companyManagerId = companyManagerId;
+        this.lastAssignedHubSequence = -1;
     }
 
     /**
@@ -68,6 +72,14 @@ public class Delivery extends BaseEntity {
      */
     public void assignCompanyManager(UUID companyManagerId) {
         this.companyManagerId = companyManagerId;
+    }
+
+    public void updateLastAssignedHubSequence(Integer sequence) {
+        this.lastAssignedHubSequence = sequence;
+    }
+
+    public void updateStatus(DeliveryStatus status) {
+        this.currentStatus = status;
     }
 
 

@@ -18,7 +18,7 @@ public class GetHubResponse {
 
 
     public static GetHubResponse from(Hub hub) {
-        return GetHubResponse.builder() // GetHubResponse 클래스의 빌더 사용
+        return GetHubResponse.builder()
                 .hubId(hub.getHubId())
                 .hubName(hub.getHubName())
                 .latitude(hub.getLocation().getLatitude())
@@ -26,5 +26,4 @@ public class GetHubResponse {
                 .address(hub.getLocation().getAddress())
                 .build();
     }
-
 }
