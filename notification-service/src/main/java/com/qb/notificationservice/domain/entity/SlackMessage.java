@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "p_slack_messages")
+@Table(name = "p_slack_messages", schema = "notification_schema")
 @Getter
 @Builder
 @NoArgsConstructor

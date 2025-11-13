@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.qb.common.annotations.CurrentUser;
 import com.qb.common.enums.SuccessCode;
 import com.qb.common.response.ApiResponse;
 import com.qb.common.response.PageResponse;
@@ -41,7 +43,7 @@ public class OrderController {
 	private static final int DEFAULT_SIZE = 10;
 
 	@PostMapping
-	public ApiResponse<ResCreateOrderDto> createOrder(@RequestBody @Valid ReqCreateOrderDto requestDto){
+	public ApiResponse<ResCreateOrderDto> createOrder(@RequestBody @Valid ReqCreateOrderDto requestDto) {
 		ResCreateOrderDto newOrder = orderService.createOrder(requestDto);
 		return ApiResponse.of(SuccessCode.CREATED, newOrder);
 	}

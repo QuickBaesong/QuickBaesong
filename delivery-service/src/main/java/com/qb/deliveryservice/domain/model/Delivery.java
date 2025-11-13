@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "p_delivery")
+@Table(name = "p_delivery", schema = "delivery_schema")
 @Getter
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
 public class Delivery extends BaseEntity {

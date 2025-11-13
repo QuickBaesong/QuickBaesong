@@ -1,5 +1,7 @@
 package com.qb.notificationservice.infrastructure.slack;
 
+import org.springframework.cloud.openfeign.FeignClient;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

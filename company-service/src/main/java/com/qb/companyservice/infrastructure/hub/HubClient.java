@@ -7,10 +7,15 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Profile;
+import org.springframework.web.bind.annotation.GetMapping;
+
 /**
  * 허브 클라이언트 인터페이스
  * 허브 존재 여부 검증 등을 담당
  */
+@FeignClient(name="hub-service")
 public interface HubClient {
 
   /**
@@ -19,6 +24,7 @@ public interface HubClient {
    * @param hubId 허브 ID
    * @return 허브 존재 여부 응답
    */
+  @GetMapping("/{hubId}/validate")
   HubValidationResponse validateHub(UUID hubId);
 
   /**

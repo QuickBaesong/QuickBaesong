@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "p_hub")
+@Table(name = "p_hub", schema = "hub_schema")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Hub extends BaseEntity {

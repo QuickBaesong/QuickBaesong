@@ -1,6 +1,29 @@
 spring:
-  profiles:
-    active: local
+  application:
+    name: notification-service
+  config:
+    import:
+      - optional:file:../../.env
+      - optional:file:./.env
+
+  # --- Docker DB 연결 설정 (PostgreSQL) ---
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB_NAME}
+    username: ${POSTGRES_APP_USER} # .env 변수 참조
+    password: ${POSTGRES_APP_PASSWORD} # .env 변수 참조
+    driver-class-name: org.postgresql.Driver
+
+  # --- JPA/Hibernate 설정 ---
+  jpa:
+    hibernate:
+      ddl-auto: update
+      properties:
+        # 이 서비스가 사용할 스키마 지정
+        hibernate.default_schema: notification_schema
+        hbm2ddl.auto-create-schemas: true
+        hibernate.format_sql: true
+        hibernate.highlight_sql: true
+    show-sql: true
 
 eureka:
   client:

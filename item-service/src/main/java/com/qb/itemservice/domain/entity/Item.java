@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "p_item")
+@Table(name = "p_item", schema = "item_schema")
 public class Item extends BaseEntity {
 
 	@Id

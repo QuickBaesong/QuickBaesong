@@ -5,6 +5,7 @@ dependencies {
     // Web 및 Eureka 의존성
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     // JPA 관련
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
