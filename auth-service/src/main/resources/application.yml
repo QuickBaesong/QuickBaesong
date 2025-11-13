@@ -4,8 +4,13 @@ server:
 spring:
   application:
     name: auth-service
+  profiles:
+    active: local
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+
+jwt:
+  secret: Y6HhwftU1wySJwQlqIj306o1t8HgjXL61gxfmGQ6pSUzOm2skrczKWPJrGS9sdy/x9L1G93US/zkkIofMEktIQ==
