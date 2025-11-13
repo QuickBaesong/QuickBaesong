@@ -40,5 +40,17 @@ public class HubRouteController {
                 .body(ApiResponse.of(SuccessCode.OK, response));
     }
 
+    @GetMapping("/shortest-path")
+    public ResponseEntity<ApiResponse<ShortestRouteResponse>> searchShortestRoute(
+            @Valid @ModelAttribute ShortestRouteSearchRequest request
+    ) {
+        // ShortestRouteService를 사용하여 최단 경로를 찾습니다.
+        ShortestRouteResponse response = shortestRouteService.findShortestRoute(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.of(SuccessCode.OK, response));
+    }
+
 
 }
