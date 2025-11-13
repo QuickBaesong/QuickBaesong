@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
  * Mock 슬랙 클라이언트 (로컬/테스트 환경용)
  */
 @Component
-@Profile({"local", "test"})
 @Slf4j
 public class MockSlackClient implements SlackClient {
 

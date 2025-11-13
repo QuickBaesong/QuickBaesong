@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "p_hub_route")
+@Table(name = "p_hub_route", schema = "hub_schema")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HubRoute extends BaseEntity {

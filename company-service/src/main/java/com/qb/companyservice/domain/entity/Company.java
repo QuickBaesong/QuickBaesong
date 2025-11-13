@@ -12,7 +12,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.UUID;
 
 @Entity
-@Table(name = "p_company")
+@Table(name = "p_company", schema = "company_schema")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLRestriction("deleted_at IS NULL")

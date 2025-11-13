@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "p_delivery_manager")
+@Table(name = "p_delivery_manager", schema = "delivery_schema")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeliveryManager extends BaseEntity {

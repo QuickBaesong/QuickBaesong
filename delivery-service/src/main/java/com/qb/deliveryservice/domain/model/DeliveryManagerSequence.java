@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "p_delivery_manager_sequence")
+@Table(name = "p_delivery_manager_sequence", schema = "delivery_schema")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeliveryManagerSequence {
