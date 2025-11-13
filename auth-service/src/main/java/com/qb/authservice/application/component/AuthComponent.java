@@ -9,8 +9,13 @@ import org.springframework.stereotype.Component;
 public class AuthComponent {
     private final PasswordEncoder passwordEncoder;
 
-    // 비밀번호 암호화
+    /** 비밀번호 암호화 */
     public String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    /** 비밀번호 일치 여부 확인 */
+    public boolean passwordMatches(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }

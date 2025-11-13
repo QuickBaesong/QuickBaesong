@@ -15,33 +15,46 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/auth/**
+            - Path=/v1/auth/**, /v1/users/**
+
         - id: company-service
           uri: lb://company-service
           predicates:
-            - Path=/company/**
+            - Path=/v1/company/**
+
         - id: hub-service
           uri: lb://hub-service
           predicates:
-            - Path=/hub/**
+            - Path=/v1/hub/**, /v1/hub-routes/**
+
         - id: item-service
           uri: lb://item-service
           predicates:
-            - Path=/item/**
+            - Path=/v1/items/**
+
         - id: delivery-service
           uri: lb://delivery-service
           predicates:
-            - Path=/delivery/**
+            - Path=/v1/deliveries/**, /v1/delivery-managers/**, /v1/delivery-routes
+
         - id: order-service
           uri: lb://order-service
           predicates:
-            - Path=/order/**
+            - Path=/v1/orders/**
+
         - id: notification-service
           uri: lb://notification-service
           predicates:
-            - Path=/notification/**
+            - Path=/v1/slack/**, /v1/ai/**
 
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+jwt:
+  secret: Y6HhwftU1wySJwQlqIj306o1t8HgjXL61gxfmGQ6pSUzOm2skrczKWPJrGS9sdy/x9L1G93US/zkkIofMEktIQ==
+
+logging:
+  level:
+    root: info
+    com.example.gateway.filter.JwtAuthenticationFilter: debug
